@@ -1,0 +1,19 @@
+<view class="page readable">
+  <empty wx:if="{{loading}}" loading loading-text="加载中…" />
+  <block wx:elif="{{notice}}">
+    <view class="card">
+      <text class="detail-title">{{notice.title}}</text>
+      <text class="text-3" style="display:block; margin: 12rpx 0 24rpx;">更新于 {{notice.updated}}</text>
+      <markdown md="{{notice.content}}" />
+    </view>
+    <view wx:if="{{files.length > 0}}" class="card">
+      <text class="h3" style="margin-bottom: 12rpx;">附件</text>
+      <view wx:for="{{files}}" wx:key="key" class="file-item" bind:tap="downloadFile" data-key="{{item.key}}">
+        <text class="file-icon">📎</text>
+        <text class="file-name ellipsis flex-1">{{item.name}}</text>
+        <text class="brand-text">下载</text>
+      </view>
+    </view>
+  </block>
+  <empty wx:else text="公告不存在" />
+</view>

@@ -1,0 +1,21 @@
+.detail-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid var(--border);
+}
+.file-item:last-child {
+  border-bottom: none;
+}
+.file-icon {
+  margin-right: 14rpx;
+}
+.file-name {
+  color: var(--text);
+  margin-right: 16rpx;
+}

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "对战记录",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

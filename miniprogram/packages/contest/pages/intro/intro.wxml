@@ -1,0 +1,84 @@
+<view class="page readable">
+  <empty wx:if="{{loading}}" loading loading-text="加载赛事中…" />
+
+  <block wx:elif="{{contest}}">
+    <!-- 头部 -->
+    <view class="card hero">
+      <view class="row-between">
+        <text class="hero-name">{{contest.fullname}}</text>
+        <text class="tag {{contest.status === 'ongoing' ? 'tag-success' : 'tag-gray'}}">{{statusText}}</text>
+      </view>
+      <text class="text-2" style="display:block; margin-top: 10rpx;">{{contest.start}} ~ {{contest.end}}</text>
+
+      <view class="stat-row">
+        <view class="stat">
+          <text class="stat-num">{{teamCount}}</text>
+          <text class="stat-label">参赛队伍</text>
+        </view>
+        <view class="stat">
+          <text class="stat-num">{{memberCount}}</text>
+          <text class="stat-label">报名人数</text>
+        </view>
+        <view class="stat">
+          <text class="stat-num">{{memberLimit || '—'}}</text>
+          <text class="stat-label">每队上限</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 功能入口 -->
+    <view class="card fn-grid">
+      <view class="fn-item" bind:tap="goTeam">
+        <text class="fn-icon">👥</text>
+        <text class="fn-label">组队</text>
+        <text wx:if="{{!contest.teamSwitch}}" class="fn-off">关闭</text>
+      </view>
+      <view class="fn-item" bind:tap="goCode">
+        <text class="fn-icon">💾</text>
+        <text class="fn-label">代码</text>
+        <text wx:if="{{!contest.codeSwitch}}" class="fn-off">关闭</text>
+      </view>
+      <view class="fn-item" bind:tap="goScore">
+        <text class="fn-icon">📊</text>
+        <text class="fn-label">榜单</text>
+      </view>
+      <view class="fn-item" bind:tap="goArena">
+        <text class="fn-icon">⚔️</text>
+        <text class="fn-label">对战</text>
+        <text wx:if="{{!contest.arenaSwitch}}" class="fn-off">关闭</text>
+      </view>
+      <view class="fn-item" bind:tap="goNotice">
+        <text class="fn-icon">📢</text>
+        <text class="fn-label">公告</text>
+      </view>
+      <view class="fn-item" bind:tap="copyDocs">
+        <text class="fn-icon">📘</text>
+        <text class="fn-label">文档</text>
+      </view>
+    </view>
+
+    <!-- 简介 -->
+    <view class="card">
+      <text class="h3" style="display:block; margin-bottom: 16rpx;">赛事简介</text>
+      <markdown md="{{contest.description}}" />
+    </view>
+
+    <!-- 时间线 -->
+    <view class="card" wx:if="{{times.length > 0}}">
+      <text class="h3" style="display:block; margin-bottom: 20rpx;">关键节点</text>
+      <view class="timeline">
+        <view wx:for="{{times}}" wx:key="id" class="tl-item">
+          <view class="tl-dot"></view>
+          <view class="col flex-1">
+            <text class="tl-event">{{item.event}}</text>
+            <text class="text-3">{{item.time}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card tip-card">
+      <text class="text-3">试玩、直播与在线回放为 WebGL 功能，请在电脑端访问 eesast.com 使用。</text>
+    </view>
+  </block>
+</view>

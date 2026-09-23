@@ -1,0 +1,12 @@
+# 依赖与构建
+node_modules/
+miniprogram_npm/
+
+# 本地私有配置（含关闭域名校验的本地调试项，禁止提交）
+project.private.config.json
+
+# 开发者工具与系统文件
+.DS_Store
+*.log
+.idea/
+.vscode/

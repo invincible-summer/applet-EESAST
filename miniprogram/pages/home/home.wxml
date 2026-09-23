@@ -1,0 +1,71 @@
+<view class="page readable">
+  <!-- 轮播 -->
+  <swiper class="news-swiper" indicator-dots indicator-color="rgba(255,255,255,0.4)"
+    indicator-active-color="#ffffff" circular autoplay interval="5000">
+    <swiper-item wx:for="{{news}}" wx:key="title">
+      <view class="news-item">
+        <image class="news-img" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="news-mask"></view>
+        <text class="news-title">{{item.title}}</text>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 快捷入口 -->
+  <view class="card quick">
+    <view class="quick-item" bind:tap="goContestList">
+      <view class="quick-icon qi-contest">赛</view>
+      <text class="quick-label">赛事互动</text>
+    </view>
+    <view class="quick-item" bind:tap="goNotices">
+      <view class="quick-icon qi-info">信</view>
+      <text class="quick-label">信息化平台</text>
+    </view>
+    <view class="quick-item" bind:tap="goCourse">
+      <view class="quick-icon qi-course">课</view>
+      <text class="quick-label">课程评测</text>
+    </view>
+    <view class="quick-item" bind:tap="goLLM">
+      <view class="quick-icon qi-llm">AI</view>
+      <text class="quick-label">大模型对话</text>
+    </view>
+  </view>
+
+  <!-- 部门 -->
+  <view class="section-head">
+    <text class="h2">科协部门</text>
+    <text class="text-3">EESAST DIVISIONS</text>
+  </view>
+  <scroll-view class="division-scroll" scroll-x enable-flex enhanced show-scrollbar="{{false}}">
+    <view class="division-card" wx:for="{{divisions}}" wx:key="name">
+      <view class="division-body">
+        <text class="division-name">{{item.name}}</text>
+        <text class="division-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 赛事展示墙 -->
+  <view class="section-head">
+    <text class="h2">赛事展示</text>
+    <text class="text-3">CONTESTS</text>
+  </view>
+  <view class="wall">
+    <view class="card wall-card" wx:for="{{displayWall}}" wx:key="id">
+      <image class="wall-img" src="{{item.image}}" mode="aspectFill" lazy-load></image>
+      <view class="wall-body">
+        <text class="wall-title">{{item.title}}</text>
+        <text class="wall-desc ellipsis-2">{{item.description}}</text>
+        <view class="row wall-actions">
+          <view class="btn btn-sm btn-ghost" bind:tap="goContestList">去参赛</view>
+          <view class="btn btn-sm btn-plain" bind:tap="copyLink" data-url="{{item.docs}}">复制文档链接</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer text-3">
+    <text>清华大学电子工程系学生科协</text>
+    <text class="footer-links" bind:tap="copyLink" data-url="https://eesast.com">eesast.com</text>
+  </view>
+</view>

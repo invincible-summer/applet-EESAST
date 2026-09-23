@@ -1,0 +1,26 @@
+<view class="page readable">
+  <!-- 筛选 -->
+  <scroll-view class="filter-bar" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="filter-item {{filter === 'all' ? 'filter-active' : ''}}" bind:tap="setFilter" data-filter="all">全部</view>
+    <view class="filter-item {{filter === 'ongoing' ? 'filter-active' : ''}}" bind:tap="setFilter" data-filter="ongoing">进行中</view>
+    <view class="filter-item {{filter === 'not_started' ? 'filter-active' : ''}}" bind:tap="setFilter" data-filter="not_started">未开始</view>
+    <view class="filter-item {{filter === 'finished' ? 'filter-active' : ''}}" bind:tap="setFilter" data-filter="finished">已结束</view>
+  </scroll-view>
+
+  <empty wx:if="{{loading}}" loading loading-text="加载赛事中…" />
+  <block wx:else>
+    <view wx:if="{{filteredContests.length === 0}}">
+      <empty text="暂无赛事" />
+    </view>
+    <view wx:for="{{filteredContests}}" wx:key="id" class="card contest-card" bind:tap="goDetail" data-id="{{item.id}}">
+      <view class="row-between">
+        <text class="contest-name">{{item.name}}</text>
+        <text class="tag {{item.status === 'ongoing' ? 'tag-success' : 'tag-gray'}}">{{item.statusText}}</text>
+      </view>
+      <text class="contest-desc ellipsis-2">{{item.description}}</text>
+      <view class="row contest-meta">
+        <text class="text-3">{{item.start}} ~ {{item.end}}</text>
+      </view>
+    </view>
+  </block>
+</view>

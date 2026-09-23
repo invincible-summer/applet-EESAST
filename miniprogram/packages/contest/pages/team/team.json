@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "组队管理",
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

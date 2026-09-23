@@ -1,0 +1,22 @@
+<view class="page readable">
+  <view class="share-head">
+    <text class="h1">资源共享</text>
+    <text class="text-2" style="margin-top: 8rpx;">课程资料 · 技术分享 · 学习生活</text>
+  </view>
+
+  <view class="grid">
+    <view wx:for="{{entries}}" wx:key="key" class="card entry-card"
+      bind:tap="onTap" data-key="{{item.key}}" data-login="{{item.login}}">
+      <text class="entry-icon">{{item.icon}}</text>
+      <view class="col flex-1">
+        <text class="entry-name">{{item.name}}</text>
+        <text class="entry-desc ellipsis-2">{{item.desc}}</text>
+      </view>
+      <text class="entry-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="card tip">
+    <text class="text-3">提示： Docs / Minecraft 等网页端内容已复制链接，可在浏览器中打开。课程评测需要登录后使用。</text>
+  </view>
+</view>

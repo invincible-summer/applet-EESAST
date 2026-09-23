@@ -1,0 +1,68 @@
+<view class="chat-root">
+  <!-- 顶栏 -->
+  <view class="chat-top">
+    <picker mode="selector" range="{{models}}" range-key="name" value="{{modelIndex}}" bindchange="onModelChange">
+      <view class="model-pick">
+        <text class="model-name ellipsis">{{models.length ? models[modelIndex].name : '加载模型…'}} ▾</text>
+      </view>
+    </picker>
+    <view class="row" style="gap: 20rpx;">
+      <view class="dt-toggle {{deepThinking ? 'dt-on' : ''}}" bind:tap="toggleDeep">深度思考</view>
+      <view class="drawer-btn" bind:tap="toggleDrawer">☰</view>
+    </view>
+  </view>
+
+  <!-- 配额 -->
+  <view wx:if="{{quota}}" class="quota-bar">
+    <view class="quota-track">
+      <view class="quota-fill {{quotaPercent >= 90 ? 'quota-danger' : ''}}" style="width: {{quotaPercent}}%;"></view>
+    </view>
+    <text class="text-3">配额 {{quotaPercent}}%</text>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view class="msg-scroll" scroll-y scroll-into-view="bottom-anchor" enhanced show-scrollbar="{{false}}">
+    <empty wx:if="{{messages.length === 0}}" text="和 AI 助手聊聊吧（配额内免费）" />
+    <view wx:for="{{messages}}" wx:key="index" class="msg-row {{item.role === 'user' ? 'msg-right' : ''}}">
+      <view class="bubble {{item.role === 'user' ? 'bubble-user' : 'bubble-ai'}}">
+        <!-- 深度思考折叠块 -->
+        <view wx:if="{{item.reasoning}}" class="think-block">
+          <view class="think-head" bind:tap="toggleThinking" data-index="{{index}}">
+            <text class="think-title">深度思考过程</text>
+            <text class="think-arrow">{{thinkingExpanded[index] ? '收起' : '展开'}}</text>
+          </view>
+          <text wx:if="{{thinkingExpanded[index]}}" class="think-body" user-select>{{item.reasoning}}</text>
+        </view>
+        <text wx:if="{{item.content}}" class="bubble-text" user-select>{{item.content}}</text>
+        <text wx:if="{{!item.content && streaming && index === messages.length - 1}}" class="bubble-text text-3">思考中…</text>
+      </view>
+    </view>
+    <view id="bottom-anchor" style="height: 24rpx;"></view>
+  </scroll-view>
+
+  <!-- 输入区 -->
+  <view class="chat-input safe-bottom">
+    <input class="input flex-1" value="{{input}}" bind:input="onInput" confirm-type="send"
+      bind:confirm="send" placeholder="输入消息…" placeholder-class="ph" disabled="{{streaming}}" />
+    <view wx:if="{{!streaming}}" class="send-btn" bind:tap="send">发送</view>
+    <view wx:else class="send-btn send-stop" bind:tap="stop">停止</view>
+  </view>
+
+  <!-- 会话抽屉 -->
+  <view wx:if="{{drawerOpen}}" class="drawer-mask" bind:tap="toggleDrawer">
+    <view class="drawer" catch:tap="">
+      <view class="row-between" style="padding: 24rpx; border-bottom: 1rpx solid var(--border);">
+        <text class="h3">历史会话</text>
+        <view class="btn btn-sm btn-ghost" bind:tap="newSession">＋ 新对话</view>
+      </view>
+      <scroll-view scroll-y class="drawer-list">
+        <view wx:for="{{sessions}}" wx:key="id"
+          class="drawer-item {{item.id === activeSessionId ? 'drawer-on' : ''}}"
+          bind:tap="switchSession" data-id="{{item.id}}">
+          <text class="drawer-title ellipsis flex-1">{{item.title}}</text>
+          <text class="drawer-del" catch:tap="deleteSession" data-id="{{item.id}}">删除</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

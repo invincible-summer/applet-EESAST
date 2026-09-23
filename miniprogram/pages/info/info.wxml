@@ -1,0 +1,55 @@
+<view class="page readable">
+  <!-- 未登录 -->
+  <view wx:if="{{access === 'need_login'}}" class="card gate">
+    <text class="gate-title">信息化平台</text>
+    <text class="text-2 gate-desc">信息化平台是院系共建的学生操作平台，包含门户公告、新生导师、奖学金申请等功能。请先登录并完成清华邮箱认证。</text>
+    <view class="btn btn-primary gate-btn" bind:tap="goLogin">去登录</view>
+  </view>
+
+  <!-- 无权限（未清华认证） -->
+  <view wx:elif="{{access === 'forbidden'}}" class="card gate">
+    <text class="gate-title">需要清华身份</text>
+    <text class="text-2 gate-desc">检测到当前账号尚未完成清华邮箱认证。请在「我的 → 清华邮箱认证」中完成认证后访问信息化平台。</text>
+    <view class="btn btn-primary gate-btn" bind:tap="goLogin">去认证</view>
+  </view>
+
+  <!-- 正常内容 -->
+  <block wx:else>
+    <!-- 功能入口 -->
+    <view class="entry-row">
+      <view class="entry card" bind:tap="goMentor">
+        <text class="entry-icon">🧭</text>
+        <text class="entry-label">新生导师</text>
+      </view>
+      <view class="entry card" bind:tap="goMentorChat">
+        <text class="entry-icon">💬</text>
+        <text class="entry-label">导师交流</text>
+      </view>
+      <view class="entry card" bind:tap="goHonor">
+        <text class="entry-icon">🏅</text>
+        <text class="entry-label">奖学金申请</text>
+      </view>
+    </view>
+
+    <!-- 分类 -->
+    <scroll-view class="type-bar" scroll-x enhanced show-scrollbar="{{false}}">
+      <view wx:for="{{types}}" wx:key="*this"
+        class="type-item {{activeType === item ? 'type-active' : ''}}"
+        bind:tap="setType" data-type="{{item}}">{{item}}</view>
+    </scroll-view>
+
+    <empty wx:if="{{loading}}" loading loading-text="加载公告中…" />
+    <block wx:else>
+      <view wx:if="{{notices.length === 0}}">
+        <empty text="该分类下暂无公告" />
+      </view>
+      <view wx:for="{{notices}}" wx:key="id" class="card notice-card" bind:tap="goNoticeDetail" data-id="{{item.id}}">
+        <text class="notice-title ellipsis-2">{{item.title}}</text>
+        <view class="row-between" style="margin-top: 12rpx;">
+          <text class="tag tag-brand">{{item.type}}</text>
+          <text class="text-3">{{item.updated}}</text>
+        </view>
+      </view>
+    </block>
+  </block>
+</view>

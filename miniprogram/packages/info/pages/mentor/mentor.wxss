@@ -1,0 +1,95 @@
+.gate {
+  padding: 60rpx 40rpx;
+  text-align: center;
+}
+.tab-bar {
+  display: flex;
+  background: var(--card);
+  border-radius: 16rpx;
+  padding: 8rpx;
+  margin-bottom: 24rpx;
+  border: 1rpx solid var(--border);
+}
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: var(--text-2);
+  border-radius: 12rpx;
+}
+.tab-on {
+  background: var(--brand-light);
+  color: var(--brand);
+  font-weight: 600;
+}
+.sched-row {
+  display: flex;
+  gap: 18rpx;
+  padding: 12rpx 0;
+}
+.sched-key {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 10rpx;
+  background: var(--brand-light);
+  color: var(--brand);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 26rpx;
+}
+.appl-stmt {
+  display: block;
+  margin-top: 12rpx;
+  padding: 16rpx;
+  background: var(--card-2);
+  border-radius: 12rpx;
+  font-size: 25rpx;
+}
+.mt-field {
+  margin-top: 12rpx;
+}
+.field-label {
+  font-size: 22rpx;
+  color: var(--brand);
+  display: block;
+}
+.field-value {
+  font-size: 25rpx;
+  color: var(--text-2);
+  display: block;
+  margin-top: 2rpx;
+}
+.record-row {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid var(--border);
+}
+.record-row:last-child {
+  border-bottom: none;
+}
+.member-row {
+  margin-bottom: 20rpx;
+}
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: var(--mask);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+.modal {
+  width: 100%;
+  max-width: 640rpx;
+  margin: 0;
+}
+.ph {
+  color: var(--text-3);
+}

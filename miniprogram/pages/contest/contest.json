@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "赛事互动",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

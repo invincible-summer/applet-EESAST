@@ -1,0 +1,14 @@
+<view class="page readable">
+  <empty wx:if="{{loading}}" loading loading-text="加载中…" />
+  <block wx:else>
+    <empty wx:if="{{weeklies.length === 0}}" text="暂无推送" />
+    <view wx:for="{{weeklies}}" wx:key="id" class="card weekly-card" bind:tap="copyUrl" data-url="{{item.url}}">
+      <view class="col flex-1">
+        <text class="weekly-title ellipsis-2">{{item.title}}</text>
+        <text class="text-3" style="margin-top: 10rpx;">{{item.date}}</text>
+      </view>
+      <text class="entry-arrow">›</text>
+    </view>
+    <view class="text-3" style="text-align:center; margin-top: 16rpx;">点击复制链接，在浏览器中阅读全文</view>
+  </block>
+</view>

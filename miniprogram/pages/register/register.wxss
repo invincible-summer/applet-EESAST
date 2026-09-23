@@ -1,0 +1,65 @@
+.steps {
+  display: flex;
+  justify-content: space-between;
+  margin: 8rpx 8rpx 32rpx;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.step-dot {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: var(--card-2);
+  border: 1rpx solid var(--border);
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  margin-bottom: 10rpx;
+}
+.step-on .step-dot {
+  background: var(--brand-grad);
+  color: #ffffff;
+  border-color: transparent;
+  font-weight: 700;
+}
+.step-label {
+  font-size: 22rpx;
+  color: var(--text-3);
+}
+.step-on .step-label {
+  color: var(--brand);
+}
+.role-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid var(--border);
+}
+.role-item:last-child {
+  border-bottom: none;
+}
+.role-disabled {
+  opacity: 0.55;
+}
+.role-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+.entry-arrow {
+  font-size: 40rpx;
+  color: var(--text-3);
+  margin-left: 12rpx;
+}
+.ph {
+  color: var(--text-3);
+}
+.picker-value {
+  color: var(--text);
+}

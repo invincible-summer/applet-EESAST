@@ -1,0 +1,40 @@
+<view class="page readable">
+  <!-- 搜索/过滤 -->
+  <view class="row" style="gap: 16rpx; margin-bottom: 22rpx;">
+    <input class="input flex-1" value="{{keyword}}" bind:input="onSearch" placeholder="搜索队伍 / 房间号" placeholder-class="ph" />
+    <view class="btn btn-sm {{onlyMine ? 'btn-ghost' : 'btn-plain'}}" bind:tap="toggleMine">只看我的队</view>
+  </view>
+
+  <empty wx:if="{{loading}}" loading loading-text="加载对战中…" />
+  <block wx:else>
+    <empty wx:if="{{rooms.length === 0}}" text="暂无对战记录" />
+    <view wx:for="{{rooms}}" wx:key="roomId" class="card room-card">
+      <view class="row-between" style="margin-bottom: 16rpx;">
+        <view class="row" style="gap: 12rpx;">
+          <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
+          <text class="text-3">{{item.time}}</text>
+        </view>
+        <text class="text-3 ellipsis" style="max-width: 300rpx;">{{item.roomId}}</text>
+      </view>
+
+      <!-- 对战双方 -->
+      <view class="vs-row">
+        <view class="vs-team">
+          <text class="vs-name ellipsis">{{item.teams[0].name || '—'}}</text>
+          <text class="vs-score">{{item.teams[0].score}}</text>
+        </view>
+        <text class="vs-text">VS</text>
+        <view class="vs-team">
+          <text class="vs-name ellipsis">{{item.teams[1].name || '—'}}</text>
+          <text class="vs-score">{{item.teams[1].score}}</text>
+        </view>
+      </view>
+
+      <view class="row room-actions">
+        <view class="btn btn-sm btn-plain" bind:tap="watchLive">观看直播</view>
+        <view class="btn btn-sm btn-ghost" bind:tap="downloadPlayback" data-room="{{item.roomId}}">下载回放</view>
+      </view>
+    </view>
+    <view class="text-3 refresh-tip">每 10 秒自动刷新 · 下拉立即刷新</view>
+  </block>
+</view>

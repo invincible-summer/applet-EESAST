@@ -1,0 +1,118 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/contest/contest",
+    "pages/info/info",
+    "pages/share/share",
+    "pages/user/user",
+    "pages/register/register",
+    "pages/reset/reset",
+    "pages/notice-detail/notice-detail"
+  ],
+  "subPackages": [
+    {
+      "root": "packages/contest",
+      "name": "contest",
+      "pages": [
+        "pages/intro/intro",
+        "pages/notice/notice",
+        "pages/notice-detail/notice-detail",
+        "pages/team/team",
+        "pages/code/code",
+        "pages/score/score",
+        "pages/arena/arena"
+      ]
+    },
+    {
+      "root": "packages/info",
+      "name": "info",
+      "pages": [
+        "pages/mentor/mentor",
+        "pages/mentor-chat/mentor-chat",
+        "pages/honor/honor"
+      ]
+    },
+    {
+      "root": "packages/share",
+      "name": "share",
+      "pages": [
+        "pages/course/course",
+        "pages/course-detail/course-detail",
+        "pages/weekly/weekly"
+      ]
+    },
+    {
+      "root": "packages/chat",
+      "name": "chat",
+      "pages": [
+        "pages/chat/chat"
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/contest/contest": {
+      "network": "all",
+      "packages": ["contest"]
+    },
+    "pages/info/info": {
+      "network": "all",
+      "packages": ["info"]
+    },
+    "pages/share/share": {
+      "network": "wifi",
+      "packages": ["share"]
+    }
+  },
+  "window": {
+    "navigationBarBackgroundColor": "@navBgColor",
+    "navigationBarTextStyle": "@navTxtStyle",
+    "navigationBarTitleText": "EESAST",
+    "backgroundColor": "@bgColor",
+    "backgroundTextStyle": "@bgTxtStyle"
+  },
+  "tabBar": {
+    "color": "@tabColor",
+    "selectedColor": "@tabSelectedColor",
+    "backgroundColor": "@tabBgColor",
+    "borderStyle": "@tabBorderStyle",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "assets/tab/home.png",
+        "selectedIconPath": "assets/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/contest/contest",
+        "text": "赛事",
+        "iconPath": "assets/tab/contest.png",
+        "selectedIconPath": "assets/tab/contest-active.png"
+      },
+      {
+        "pagePath": "pages/info/info",
+        "text": "信息化",
+        "iconPath": "assets/tab/info.png",
+        "selectedIconPath": "assets/tab/info-active.png"
+      },
+      {
+        "pagePath": "pages/share/share",
+        "text": "资源",
+        "iconPath": "assets/tab/share.png",
+        "selectedIconPath": "assets/tab/share-active.png"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "我的",
+        "iconPath": "assets/tab/user.png",
+        "selectedIconPath": "assets/tab/user-active.png"
+      }
+    ]
+  },
+  "darkmode": true,
+  "themeLocation": "theme.json",
+  "lazyCodeLoading": "requiredComponents",
+  "networkTimeout": {
+    "request": 20000,
+    "downloadFile": 60000
+  }
+}

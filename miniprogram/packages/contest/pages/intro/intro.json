@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "赛事详情",
+  "usingComponents": {
+    "markdown": "/components/markdown/markdown",
+    "empty": "/components/empty/empty"
+  }
+}

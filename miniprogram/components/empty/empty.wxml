@@ -1,0 +1,6 @@
+<view class="empty {{loading ? 'empty-loading' : ''}}">
+  <view wx:if="{{loading}}" class="empty-spinner"></view>
+  <view wx:else class="empty-dot"></view>
+  <text class="empty-text">{{loading ? loadingText : text}}</text>
+  <slot></slot>
+</view>

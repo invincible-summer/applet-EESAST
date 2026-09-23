@@ -1,0 +1,55 @@
+<view class="md">
+  <block wx:for="{{blocks}}" wx:key="index" wx:for-item="block">
+    <view wx:if="{{block.type === 'h1'}}" class="md-h1 md-inline"><rich-text nodes="{{block.html}}"></rich-text></view>
+    <view wx:elif="{{block.type === 'h2'}}" class="md-h2 md-inline"><rich-text nodes="{{block.html}}"></rich-text></view>
+    <view wx:elif="{{block.type === 'h3'}}" class="md-h3 md-inline"><rich-text nodes="{{block.html}}"></rich-text></view>
+    <view wx:elif="{{block.type === 'h4'}}" class="md-h4 md-inline"><rich-text nodes="{{block.html}}"></rich-text></view>
+
+    <view wx:elif="{{block.type === 'p'}}" class="md-p md-inline"><rich-text nodes="{{block.html}}"></rich-text></view>
+
+    <view wx:elif="{{block.type === 'quote'}}" class="md-quote md-inline"><rich-text nodes="{{block.html}}"></rich-text></view>
+
+    <view wx:elif="{{block.type === 'code'}}" class="md-codeblock" bind:tap="onCopyCode" data-text="{{block.text}}">
+      <view class="md-codeblock-head">
+        <text class="md-code-lang">{{block.lang || 'code'}}</text>
+        <text class="md-code-copy">复制</text>
+      </view>
+      <text class="md-code-text" user-select>{{block.text}}</text>
+    </view>
+
+    <view wx:elif="{{block.type === 'ul'}}" class="md-list">
+      <view wx:for="{{block.items}}" wx:key="index" wx:for-item="item" class="md-li md-inline">
+        <text class="md-bullet">•</text>
+        <rich-text class="flex-1" nodes="{{item.html}}"></rich-text>
+      </view>
+    </view>
+
+    <view wx:elif="{{block.type === 'ol'}}" class="md-list">
+      <view wx:for="{{block.items}}" wx:key="index" wx:for-item="item" class="md-li md-inline">
+        <text class="md-bullet md-olnum">{{index + 1}}.</text>
+        <rich-text class="flex-1" nodes="{{item.html}}"></rich-text>
+      </view>
+    </view>
+
+    <view wx:elif="{{block.type === 'img'}}" class="md-imgwrap">
+      <image class="md-blockimg" src="{{block.src}}" mode="widthFix" bind:tap="onPreviewImg" data-src="{{block.src}}"></image>
+    </view>
+
+    <view wx:elif="{{block.type === 'hr'}}" class="md-hr"></view>
+
+    <view wx:elif="{{block.type === 'table'}}" class="md-tablewrap">
+      <view class="md-table">
+        <view class="md-tr md-thead">
+          <view wx:for="{{block.header}}" wx:key="index" wx:for-item="cell" class="md-td md-inline">
+            <rich-text nodes="{{cell}}"></rich-text>
+          </view>
+        </view>
+        <view wx:for="{{block.rows}}" wx:key="index" wx:for-item="row" class="md-tr">
+          <view wx:for="{{row}}" wx:key="index" wx:for-item="cell" class="md-td md-inline">
+            <rich-text nodes="{{cell}}"></rich-text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

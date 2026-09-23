@@ -1,0 +1,37 @@
+.filter-bar {
+  white-space: nowrap;
+  margin-bottom: 24rpx;
+}
+.filter-item {
+  display: inline-block;
+  padding: 10rpx 30rpx;
+  margin-right: 16rpx;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: var(--text-2);
+  background: var(--card);
+  border: 1rpx solid var(--border);
+}
+.filter-active {
+  background: var(--brand-light);
+  color: var(--brand);
+  border-color: transparent;
+  font-weight: 600;
+}
+.contest-card {
+  display: flex;
+  flex-direction: column;
+}
+.contest-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+.contest-desc {
+  font-size: 26rpx;
+  color: var(--text-2);
+  margin-bottom: 14rpx;
+}
+.contest-meta {
+  justify-content: flex-start;
+}

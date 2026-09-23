@@ -1,0 +1,43 @@
+<view class="page chat-page readable">
+  <empty wx:if="{{loading}}" loading loading-text="加载中…" />
+
+  <view wx:elif="{{access === 'forbidden'}}" class="card gate">
+    <text class="h3">需要清华身份</text>
+  </view>
+
+  <!-- 联系人列表 -->
+  <block wx:elif="{{view === 'contacts'}}">
+    <empty wx:if="{{contacts.length === 0}}" text="暂无已配对的导师/学生" />
+    <view wx:for="{{contacts}}" wx:key="id" class="card contact" bind:tap="openChat" data-uuid="{{item.uuid}}" data-name="{{item.name}}">
+      <view class="contact-avatar">{{item.name[0]}}</view>
+      <view class="col flex-1">
+        <text class="bold">{{item.name}}</text>
+        <text class="text-3">我的{{item.role}}</text>
+      </view>
+      <text class="entry-arrow">›</text>
+    </view>
+  </block>
+
+  <!-- 聊天视图 -->
+  <block wx:elif="{{view === 'chat'}}">
+    <view class="chat-head">
+      <text class="back" bind:tap="backContacts">‹ 返回</text>
+      <text class="chat-title">{{activeChat.name}}</text>
+    </view>
+    <scroll-view class="msg-list" scroll-y scroll-into-view="msg-bottom" enhanced show-scrollbar="{{false}}">
+      <empty wx:if="{{messages.length === 0}}" text="开始你们的对话吧" />
+      <view wx:for="{{messages}}" wx:key="id" class="msg-row {{item.mine ? 'msg-mine' : ''}}">
+        <view class="msg-bubble {{item.mine ? 'bubble-mine' : ''}}">
+          <text class="msg-text" user-select>{{item.text}}</text>
+          <text class="msg-time">{{item.time}}</text>
+        </view>
+      </view>
+      <view id="msg-bottom" style="height: 20rpx;"></view>
+    </scroll-view>
+    <view class="chat-input-bar">
+      <input class="input flex-1" value="{{input}}" bind:input="onInput" confirm-type="send"
+        bind:confirm="send" placeholder="输入消息…" placeholder-class="ph" />
+      <view class="btn btn-sm btn-primary {{sending ? 'btn-disabled' : ''}}" bind:tap="send">发送</view>
+    </view>
+  </block>
+</view>

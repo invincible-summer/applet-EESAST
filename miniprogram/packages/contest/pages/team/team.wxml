@@ -1,0 +1,122 @@
+<view class="page readable">
+  <empty wx:if="{{loading}}" loading loading-text="加载中…" />
+
+  <!-- 未入队 -->
+  <block wx:elif="{{view === 'join'}}">
+    <view wx:if="{{!teamSwitch}}" class="card">
+      <text class="h3">组队功能未开放</text>
+      <text class="text-2" style="display:block; margin-top: 10rpx;">当前比赛未开放组队，请关注公告。</text>
+    </view>
+
+    <block wx:else>
+      <!-- 创建 -->
+      <view class="card">
+        <text class="h3" style="display:block; margin-bottom: 22rpx;">创建队伍</text>
+        <view class="form-item">
+          <text class="form-label">队伍名称</text>
+          <input class="input" value="{{createForm.name}}" data-form="createForm" data-field="name" bind:input="onInput" placeholder="给队伍起个名字" placeholder-class="ph" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">队伍简介（可选）</text>
+          <textarea class="textarea" value="{{createForm.intro}}" data-form="createForm" data-field="intro" bind:input="onInput" placeholder="介绍一下你的队伍" placeholder-class="ph" maxlength="200"></textarea>
+        </view>
+        <view class="btn btn-primary" bind:tap="createTeam">创建</view>
+      </view>
+
+      <!-- 加入 -->
+      <view class="card">
+        <text class="h3" style="display:block; margin-bottom: 22rpx;">输入邀请码加入</text>
+        <view class="row" style="gap: 16rpx;">
+          <input class="input flex-1" value="{{inviteCode}}" bind:input="onCodeInput" placeholder="8 位邀请码" placeholder-class="ph" />
+          <view class="btn btn-sm btn-ghost" bind:tap="lookupTeam">查询</view>
+        </view>
+
+        <view wx:if="{{inviteTeam}}" class="invite-result">
+          <view class="row-between">
+            <text class="h3">{{inviteTeam.name}}</text>
+            <text class="tag tag-gray">{{inviteTeam.count}}/{{memberLimit || '—'}} 人</text>
+          </view>
+          <text class="text-2" style="display:block; margin: 10rpx 0;">{{inviteTeam.intro || '暂无简介'}}</text>
+          <text class="text-3">队长：{{inviteTeam.leader || '—'}}</text>
+          <view class="btn btn-primary" style="margin-top: 22rpx;" bind:tap="joinTeam">加入队伍</view>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <!-- 已入队 -->
+  <block wx:elif="{{view === 'manage' && team}}">
+    <view class="card">
+      <view class="row-between">
+        <block wx:if="{{!editing}}">
+          <text class="h2">{{team.name}}</text>
+          <text class="brand-text" bind:tap="toggleEdit">编辑</text>
+        </block>
+      </view>
+      <block wx:if="{{editing}}">
+        <view class="form-item" style="margin-top: 10rpx;">
+          <text class="form-label">队伍名称</text>
+          <input class="input" value="{{editForm.name}}" data-form="editForm" data-field="name" bind:input="onInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">队伍简介</text>
+          <textarea class="textarea" value="{{editForm.intro}}" data-form="editForm" data-field="intro" bind:input="onInput" maxlength="200"></textarea>
+        </view>
+        <view class="row" style="gap: 18rpx;">
+          <view class="btn btn-plain flex-1" bind:tap="toggleEdit">取消</view>
+          <view class="btn btn-primary flex-1" bind:tap="saveTeam">保存</view>
+        </view>
+      </block>
+      <block wx:else>
+        <text class="text-2" style="display:block; margin-top: 8rpx;">{{team.intro || '暂无简介'}}</text>
+        <view class="divider"></view>
+        <view class="row-between">
+          <view class="col">
+            <text class="text-3">邀请码</text>
+            <text class="code-text">{{team.invitedCode}}</text>
+          </view>
+          <view class="btn btn-sm btn-ghost" bind:tap="copyCode">复制</view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 统计 -->
+    <view class="card stat-row">
+      <view class="stat">
+        <text class="stat-num">{{stats.codes}}</text>
+        <text class="stat-label">代码数</text>
+      </view>
+      <view class="stat">
+        <text class="stat-num">{{stats.rooms}}</text>
+        <text class="stat-label">对战场次</text>
+      </view>
+      <view class="stat">
+        <text class="stat-num">{{stats.score}}</text>
+        <text class="stat-label">天梯积分</text>
+      </view>
+    </view>
+
+    <!-- 成员 -->
+    <view class="card">
+      <view class="row-between" style="margin-bottom: 12rpx;">
+        <text class="h3">成员（{{members.length}}/{{memberLimit || '—'}}）</text>
+        <text class="brand-text" bind:tap="goCode">去提交代码</text>
+      </view>
+      <view wx:for="{{members}}" wx:key="uuid" class="member-item">
+        <view class="member-avatar">{{item.realname[0]}}</view>
+        <view class="col flex-1">
+          <view class="row">
+            <text class="member-name">{{item.realname}}</text>
+            <text wx:if="{{item.uuid === team.leaderUuid}}" class="tag tag-brand" style="margin-left: 12rpx;">队长</text>
+          </view>
+          <text class="text-3">{{item.class}}{{item.studentNo ? ' · ' + item.studentNo : ''}}</text>
+        </view>
+        <view wx:if="{{isLeader && item.uuid !== team.leaderUuid}}" class="member-remove" bind:tap="removeMember" data-uuid="{{item.uuid}}" data-name="{{item.realname}}">移除</view>
+      </view>
+    </view>
+
+    <!-- 操作 -->
+    <view class="btn btn-plain" bind:tap="quitTeam">退出队伍</view>
+    <view wx:if="{{isLeader}}" class="btn btn-danger" style="margin-top: 20rpx;" bind:tap="dissolveTeam">解散队伍</view>
+  </block>
+</view>

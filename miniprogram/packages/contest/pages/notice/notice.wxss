@@ -1,0 +1,11 @@
+.notice-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  display: block;
+}
+.notice-summary {
+  font-size: 25rpx;
+  color: var(--text-2);
+  margin-top: 8rpx;
+  display: block;
+}

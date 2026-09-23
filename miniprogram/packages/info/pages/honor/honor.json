@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "奖学金申请",
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

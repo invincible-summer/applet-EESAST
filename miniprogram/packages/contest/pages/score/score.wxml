@@ -1,0 +1,21 @@
+<view class="page readable">
+  <!-- 顶部表头 -->
+  <view class="rank-head">
+    <text class="rank-col">排名</text>
+    <text class="team-col">队伍</text>
+    <text class="score-col">{{mode === 'rl' ? 'RL 积分' : '天梯积分'}}</text>
+  </view>
+
+  <empty wx:if="{{loading}}" loading loading-text="加载榜单中…" />
+  <block wx:else>
+    <empty wx:if="{{teams.length === 0}}" text="暂无队伍数据" />
+    <view wx:for="{{teams}}" wx:key="teamId" class="card rank-item">
+      <view class="rank-col rank-num {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</view>
+      <view class="team-col col">
+        <text class="team-name ellipsis">{{item.name}}</text>
+        <text class="text-3 ellipsis">{{item.leader}}{{item.members ? ' · ' + item.members : ''}}</text>
+      </view>
+      <view class="score-col score-num">{{item.score}}</view>
+    </view>
+  </block>
+</view>

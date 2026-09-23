@@ -1,0 +1,94 @@
+<view class="page readable">
+  <empty wx:if="{{loading}}" loading loading-text="加载中…" />
+
+  <!-- 硬件赛无代码提交 -->
+  <view wx:elif="{{contestType === 'none'}}" class="card">
+    <text class="h3">本赛事无需在线提交代码</text>
+    <text class="text-2" style="display:block; margin-top: 10rpx;">请按公告要求参与比赛。</text>
+  </view>
+
+  <block wx:else>
+    <view class="card ddl-card">
+      <text class="text-2">{{ddlText}}</text>
+      <text wx:if="{{!codeSwitch}}" class="tag tag-warning" style="margin-left: 16rpx;">提交未开放</text>
+    </view>
+
+    <!-- ============ THUAI ============ -->
+    <block wx:if="{{contestType === 'thuai'}}">
+      <view class="card">
+        <view class="row-between" style="margin-bottom: 16rpx;">
+          <text class="h3">代码列表（{{codes.length}}）</text>
+          <view class="btn btn-sm btn-primary" bind:tap="uploadCode">上传 .cpp/.py</view>
+        </view>
+        <empty wx:if="{{codes.length === 0}}" text="暂无代码，点击上传" />
+        <view wx:for="{{codes}}" wx:key="codeId" class="code-item">
+          <view class="row-between">
+            <view class="col flex-1">
+              <text class="code-name ellipsis">{{item.name}}</text>
+              <view class="row" style="gap: 12rpx; margin-top: 8rpx;">
+                <text class="tag tag-gray">{{item.language}}</text>
+                <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="row code-actions">
+            <text class="code-act" bind:tap="renameCode" data-id="{{item.codeId}}">重命名</text>
+            <text class="code-act" bind:tap="downloadCode" data-id="{{item.codeId}}" data-name="{{item.name}}" data-lang="{{item.language}}">下载</text>
+            <text class="code-act danger" bind:tap="deleteCode" data-id="{{item.codeId}}" data-name="{{item.name}}">删除</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 角色与选码 -->
+      <view class="card" wx:if="{{players.length > 0}}">
+        <text class="h3" style="display:block; margin-bottom: 16rpx;">角色代码选择</text>
+        <view wx:for="{{players}}" wx:key="*this" class="player-item">
+          <view class="col flex-1">
+            <text class="bold">{{item}}</text>
+            <text class="text-3">当前角色：{{roles[item] || '未选择'}}</text>
+          </view>
+          <view class="row" style="gap: 14rpx;">
+            <view class="btn btn-sm btn-plain" bind:tap="onRoleChange" data-player="{{item}}">选角色</view>
+            <view class="btn btn-sm btn-ghost" bind:tap="selectCodeForPlayer" data-player="{{item}}">选代码</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ SOFT ============ -->
+    <block wx:elif="{{contestType === 'soft'}}">
+      <view class="card">
+        <text class="h3" style="display:block; margin-bottom: 16rpx;">初审代码链接</text>
+        <text wx:if="{{latestCode}}" class="link-current ellipsis" bind:tap="copyUrl" data-url="{{latestCode.URL}}">当前：{{latestCode.URL}}</text>
+        <input class="input" value="{{linkInput}}" bind:input="onLinkInput" placeholder="云盘 / 仓库链接（https://…）" placeholder-class="ph" />
+        <view class="btn btn-primary" style="margin-top: 20rpx;" bind:tap="submitSoftCode">
+          {{latestCode ? '更新链接' : '提交链接'}}
+        </view>
+      </view>
+      <view class="card">
+        <text class="h3" style="display:block; margin-bottom: 16rpx;">终审代码链接</text>
+        <text wx:if="{{latestFinal}}" class="link-current ellipsis" bind:tap="copyUrl" data-url="{{latestFinal.URL}}">当前：{{latestFinal.URL}}</text>
+        <input class="input" value="{{finalInput}}" bind:input="onFinalInput" placeholder="终审代码链接（https://…）" placeholder-class="ph" />
+        <view class="btn btn-primary" style="margin-top: 20rpx;" bind:tap="submitFinalCode">
+          {{latestFinal ? '更新链接' : '提交链接'}}
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ RL ============ -->
+    <block wx:elif="{{contestType === 'rl'}}">
+      <view class="card">
+        <text class="h3" style="display:block; margin-bottom: 16rpx;">提交代码及权重链接</text>
+        <input class="input" value="{{linkInput}}" bind:input="onLinkInput" placeholder="代码 + 权重链接（https://…）" placeholder-class="ph" />
+        <view class="btn btn-primary" style="margin-top: 20rpx;" bind:tap="submitRLCode">提交</view>
+      </view>
+      <view class="card" wx:if="{{rlSubmissions.length > 0}}">
+        <text class="h3" style="display:block; margin-bottom: 12rpx;">提交记录</text>
+        <view wx:for="{{rlSubmissions}}" wx:key="idx" class="rl-item">
+          <text class="text-3">#{{item.idx}} · {{item.time}}</text>
+          <text class="rl-url ellipsis" bind:tap="copyUrl" data-url="{{item.url}}">{{item.url}}</text>
+        </view>
+      </view>
+    </block>
+  </block>
+</view>

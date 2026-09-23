@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "导师交流",
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

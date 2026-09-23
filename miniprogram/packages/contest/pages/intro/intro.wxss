@@ -1,0 +1,99 @@
+.hero-name {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+.stat-row {
+  display: flex;
+  margin-top: 28rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid var(--border);
+}
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.stat-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--brand);
+}
+.stat-label {
+  font-size: 22rpx;
+  color: var(--text-3);
+  margin-top: 4rpx;
+}
+
+.fn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16rpx 8rpx;
+}
+.fn-item {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+  position: relative;
+}
+.fn-icon {
+  font-size: 44rpx;
+  margin-bottom: 10rpx;
+}
+.fn-label {
+  font-size: 24rpx;
+  color: var(--text-2);
+}
+.fn-off {
+  position: absolute;
+  top: 10rpx;
+  right: 20rpx;
+  font-size: 18rpx;
+  color: var(--warning);
+  border: 1rpx solid var(--warning);
+  border-radius: 6rpx;
+  padding: 0 6rpx;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+.tl-item {
+  display: flex;
+  gap: 20rpx;
+  padding-bottom: 28rpx;
+  position: relative;
+}
+.tl-item:last-child {
+  padding-bottom: 0;
+}
+.tl-item::before {
+  content: "";
+  position: absolute;
+  left: 9rpx;
+  top: 24rpx;
+  bottom: 0;
+  width: 2rpx;
+  background: var(--border);
+}
+.tl-item:last-child::before {
+  display: none;
+}
+.tl-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: var(--brand);
+  margin-top: 8rpx;
+  flex-shrink: 0;
+}
+.tl-event {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.tip-card {
+  border: 1rpx dashed var(--border);
+}

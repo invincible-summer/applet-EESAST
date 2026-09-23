@@ -1,0 +1,13 @@
+.weekly-card {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+.weekly-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.entry-arrow {
+  font-size: 40rpx;
+  color: var(--text-3);
+}

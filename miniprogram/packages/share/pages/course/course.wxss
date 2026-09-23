@@ -1,0 +1,38 @@
+.ph {
+  color: var(--text-3);
+}
+.type-bar {
+  white-space: nowrap;
+  margin-bottom: 22rpx;
+}
+.type-item {
+  display: inline-block;
+  padding: 8rpx 26rpx;
+  margin-right: 14rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: var(--text-2);
+  background: var(--card);
+  border: 1rpx solid var(--border);
+}
+.type-active {
+  background: var(--brand-light);
+  color: var(--brand);
+  border-color: transparent;
+}
+.course-card {
+  display: flex;
+  flex-direction: column;
+}
+.course-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  max-width: 480rpx;
+}
+@media (min-width: 600px) {
+  .course-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20rpx;
+  }
+}

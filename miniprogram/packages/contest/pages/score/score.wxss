@@ -1,0 +1,44 @@
+.rank-head {
+  display: flex;
+  align-items: center;
+  padding: 0 28rpx 16rpx;
+  color: var(--text-3);
+  font-size: 24rpx;
+}
+.rank-item {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 28rpx;
+}
+.rank-col {
+  width: 90rpx;
+  flex-shrink: 0;
+}
+.rank-num {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text-2);
+}
+.rank-top {
+  color: var(--warning);
+}
+.team-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.team-name {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.score-col {
+  width: 150rpx;
+  flex-shrink: 0;
+  text-align: right;
+}
+.score-num {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--brand);
+}

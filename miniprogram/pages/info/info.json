@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "信息化平台",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

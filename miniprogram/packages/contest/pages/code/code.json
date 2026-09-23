@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "代码提交",
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

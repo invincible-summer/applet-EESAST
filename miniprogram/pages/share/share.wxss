@@ -1,0 +1,39 @@
+.share-head {
+  margin: 8rpx 4rpx 28rpx;
+  display: flex;
+  flex-direction: column;
+}
+.entry-card {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+}
+.entry-icon {
+  font-size: 48rpx;
+}
+.entry-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+.entry-desc {
+  font-size: 24rpx;
+  color: var(--text-2);
+}
+.entry-arrow {
+  font-size: 40rpx;
+  color: var(--text-3);
+}
+.tip {
+  margin-top: 8rpx;
+}
+@media (min-width: 600px) {
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20rpx;
+  }
+  .grid .entry-card {
+    margin-bottom: 0;
+  }
+}

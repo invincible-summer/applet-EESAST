@@ -1,0 +1,29 @@
+<view class="page readable">
+  <view class="card">
+    <text class="text-2" style="display:block; margin-bottom: 28rpx;">输入账号注册邮箱，我们将发送验证码用于重置密码。</text>
+    <view class="form-item">
+      <text class="form-label">注册邮箱</text>
+      <input class="input" type="text" value="{{email}}" data-field="email" bind:input="onInput" placeholder="example@mail.com" placeholder-class="ph" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">验证码</text>
+      <view class="row" style="gap: 16rpx;">
+        <input class="input flex-1" type="number" maxlength="6" value="{{code}}" data-field="code" bind:input="onInput" placeholder="6 位验证码" placeholder-class="ph" />
+        <view class="btn btn-sm btn-ghost {{countdown > 0 ? 'btn-disabled' : ''}}" bind:tap="sendCode">
+          {{countdown > 0 ? countdown + "s" : "获取验证码"}}
+        </view>
+      </view>
+    </view>
+    <view class="form-item">
+      <text class="form-label">新密码</text>
+      <input class="input" password value="{{password}}" data-field="password" bind:input="onInput" placeholder="至少 8 位，含大小写字母和数字" placeholder-class="ph" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">确认新密码</text>
+      <input class="input" password value="{{password2}}" data-field="password2" bind:input="onInput" placeholder="再次输入新密码" placeholder-class="ph" />
+    </view>
+    <view class="btn btn-primary {{submitting ? 'btn-disabled' : ''}}" bind:tap="submit">
+      {{submitting ? "提交中…" : "重置密码"}}
+    </view>
+  </view>
+</view>

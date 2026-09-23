@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "新生导师",
+  "usingComponents": {
+    "empty": "/components/empty/empty"
+  }
+}

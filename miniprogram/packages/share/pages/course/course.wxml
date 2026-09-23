@@ -1,0 +1,29 @@
+<view class="page readable">
+  <view wx:if="{{access === 'forbidden'}}" class="card" style="text-align:center; padding: 60rpx 40rpx;">
+    <text class="h3">课程评测面向清华师生开放</text>
+    <text class="text-2" style="display:block; margin-top: 12rpx;">请先登录并完成清华邮箱认证后使用。</text>
+    <view class="btn btn-primary" style="margin-top: 30rpx; width: 50%; margin-left: auto; margin-right: auto;" bind:tap="goLogin">去登录</view>
+  </view>
+
+  <block wx:else>
+  <input class="input" value="{{keyword}}" bind:input="onSearch" placeholder="搜索课程名 / 教师 / 课号" placeholder-class="ph" style="margin-bottom: 20rpx;" />
+
+  <scroll-view wx:if="{{types.length > 0}}" class="type-bar" scroll-x enhanced show-scrollbar="{{false}}">
+    <view wx:for="{{types}}" wx:key="*this"
+      class="type-item {{typeFilter === item ? 'type-active' : ''}}"
+      bind:tap="setType" data-type="{{item}}">{{item}}</view>
+  </scroll-view>
+
+  <empty wx:if="{{loading}}" loading loading-text="加载课程中…" />
+  <block wx:else>
+    <empty wx:if="{{filtered.length === 0}}" text="没有匹配的课程" />
+    <view wx:for="{{filtered}}" wx:key="uuid" class="card course-card" bind:tap="goDetail" data-uuid="{{item.uuid}}">
+      <view class="row-between">
+        <text class="course-name ellipsis">{{item.name}}</text>
+        <text class="tag tag-gray">{{item.type}}</text>
+      </view>
+      <text class="text-2 ellipsis" style="display:block; margin-top: 8rpx;">{{item.professor || '未知教师'}} · {{item.semester}} {{item.year}}</text>
+    </view>
+  </block>
+  </block>
+</view>

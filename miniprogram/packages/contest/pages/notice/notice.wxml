@@ -1,0 +1,11 @@
+<view class="page readable">
+  <empty wx:if="{{loading}}" loading loading-text="加载公告中…" />
+  <block wx:else>
+    <empty wx:if="{{notices.length === 0}}" text="暂无公告" />
+    <view wx:for="{{notices}}" wx:key="id" class="card" bind:tap="goDetail" data-id="{{item.id}}">
+      <text class="notice-title ellipsis-2">{{item.title}}</text>
+      <text class="notice-summary ellipsis-2">{{item.summary}}</text>
+      <text class="text-3" style="display:block; margin-top: 12rpx;">{{item.updated}}</text>
+    </view>
+  </block>
+</view>
