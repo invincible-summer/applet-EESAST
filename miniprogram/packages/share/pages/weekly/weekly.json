@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "SAST Weekly",
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "empty": "/components/empty/empty"
   }

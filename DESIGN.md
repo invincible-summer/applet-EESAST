@@ -431,3 +431,32 @@ node scripts/test_wxml_balance.cjs  # WXML 标签闭合
 4. `/chat/send` 载荷为 `{receiver_id, content: JSON.stringify({text})}`，消息按 `JSON.parse(payload).text` 渲染
 5. 清华认证流程：直接向清华邮箱发码 → `/user/edit-profile {isTsinghua:true}`（后端从验证码 token 回写 tsinghua_email + 升级 role）
 6. 轮询器由页面显式 onShow/onHide 管理（避免 onLoad 后挂生命周期在不同运行时不生效）
+
+---
+
+## 12. 第二轮打磨记录（v1.1，2026-09）
+
+围绕四项诉求的复查与优化：
+
+### 12.1 全站按钮交互审计
+- 新增 `scripts/test_wxml_handlers.cjs`：全量提取 24 个 WXML 的 bind/catch/mut-bind/capture-* 事件绑定，逐一校验同名 JS 方法存在；同时校验所有 `usingComponents` 的 js/json/wxml 三件套路径。结果：全部解析，无悬空处理器。
+- 修复 3 处 `catch:tap=""`（chat 会话抽屉、honor/mentor 弹层）：空字符串处理器在部分基础库版本不拦截冒泡，改为规范的 `catch:tap="noop"` + 页面内 `noop()` 空方法，保证「点遮罩关闭、点内容不关闭」在所有版本可靠生效。
+- LLM 对话被服务端拒绝（401/402/403/429 或域名未配）时的容错已确认：友好文案注入气泡、streaming 状态复位、可继续发送下一条，不会卡死——拒绝属预期行为，客户端表现正常。
+
+### 12.2 与 web 侧数据同步
+- weekly 与赛事列表均为 `api.eesast.com` Hasura GraphQL 实时查询（`weekly` / `contest` 表直查，与 web 端同一查询面），无任何本地快照，天然与 web 同库同步。
+- 赛事页：`onShow` 重取 + 下拉刷新（原有）；weekly 页：本轮补齐 `onShow` 重取 + `enablePullDownRefresh`，从返回栈恢复时同样刷新。
+- 首页轮播/部门/展示墙为静态配置（web 端 displayWallConfig 本身亦为静态配置文件），随小程序版本更新，行为与 web 一致。
+
+### 12.3 赛事卡片状态展示优化
+- 状态标签从头部（与名称同行）移至**卡片底部信息行右下角**：时间居左、状态居右。
+- 三态配色：进行中 = 绿 `tag-success`、未开始 = 琥珀 `tag-warning`、已结束 = 灰 `tag-gray`（原先未开始/已结束同为灰色）。
+- `contest.js` 状态仅计算一次并派生 `statusTag`（原先 `contestStatus` 每条赛事重复调用两次）。
+
+### 12.4 登录一致性复查
+- 协议与 web 完全一致：`POST /user/login {user, password}` → `{token}` → Bearer 携带（REST 与 GraphQL 同端点）→ Hasura 行级权限强制；token 仅存 wx 沙箱存储，401 统一降级匿名态。
+- 失败文案对齐 web `LoginPage.tsx`：401 → 「邮箱或密码错误」、404 → 「用户不存在」（原先统一为「账号或密码错误」）。
+
+### 12.5 回归
+- `scripts/` 四个脚本全绿：41 模块加载（固化 `test_module_load.cjs`）、24 WXML 平衡、24 WXML 处理器、COS 签名逐字节一致；27 个 JSON 全部可解析。
+- `web` / `api` / `hasura` 三仓库仍零改动（仅存在 yarn 早期自行写入的 `packageManager` 字段差异，非本仓库所为）。

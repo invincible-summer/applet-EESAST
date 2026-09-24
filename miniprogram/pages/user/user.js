@@ -112,7 +112,14 @@ Page({
         this.refresh();
       })
       .catch((e) => {
-        wx.showToast({ title: e.statusCode === 401 ? "账号或密码错误" : e.message, icon: "none" });
+        // 与 web 端 LoginPage 一致：401 密码错误 / 404 用户不存在
+        const title =
+          e.statusCode === 401
+            ? "邮箱或密码错误"
+            : e.statusCode === 404
+              ? "用户不存在"
+              : e.message || "登录失败";
+        wx.showToast({ title, icon: "none" });
       })
       .then(() => this.setData({ logging: false }));
   },

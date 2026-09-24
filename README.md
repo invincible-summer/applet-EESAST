@@ -9,7 +9,7 @@
 | 模块 | 功能 |
 |---|---|
 | 首页 | 轮播新闻、科协部门、赛事展示墙、快捷入口 |
-| 赛事互动 | 赛事列表（状态筛选）、赛事详情（简介/时间线/统计）、公告列表与 Markdown 详情（附件下载）、组队（创建/邀请码加入/队伍管理/退出解散）、代码提交（THUAI 上传+编译状态轮询+选码；SOFT/RL 链接提交）、天梯/RL 积分榜、对战记录（轮询刷新/回放下载） |
+| 赛事互动 | 赛事列表（状态筛选、卡片右下角状态角标）、赛事详情（简介/时间线/统计）、公告列表与 Markdown 详情（附件下载）、组队（创建/邀请码加入/队伍管理/退出解散）、代码提交（THUAI 上传+编译状态轮询+选码；SOFT/RL 链接提交）、天梯/RL 积分榜、对战记录（轮询刷新/回放下载） |
 | 信息化平台 | 门户公告（5 分类）、新生导师制（导师列表/申请/谈话记录上传下载）、导师-学生私信、荣誉（奖学金）申请（附件 COS 直传） |
 | 资源共享 | 课程评测（搜索/六维评分/评论/点赞收藏）、SAST Weekly |
 | AI 对话 | 多会话大模型对话（SSE 流式、深度思考、配额显示、会话本地保存） |
@@ -66,12 +66,13 @@ applet/
 
 ## 已验证
 
-- 全部 JS `node --check` 通过；全部 JSON 可解析；41 个 JS 模块在 stub 环境加载成功
-- 24 个 WXML 标签闭合平衡；全部事件处理器与 JS 方法对应；组件引用路径有效
+- 全部 JS `node --check` 通过；全部 JSON 可解析；41 个 JS 模块在 stub 环境加载成功（`node scripts/test_module_load.cjs`）
+- 24 个 WXML 标签闭合平衡（`test_wxml_balance.cjs`）；全部 bind/catch 事件处理器与 JS 方法一一对应、组件引用路径有效（`test_wxml_handlers.cjs`）
 - **WXML ↔ JS 绑定一致性**：24 个 WXML 的 `{{}}` 字段与 `<template>` 调用均可追溯到 JS 数据源，0 问题：`node scripts/test_bindings.cjs`
 - **接口实测**（对 `api.eesast.com` 线上）：匿名角色可读的全部 GraphQL 查询逐条验证通过，含 9 个赛事的 `contest_time` 时间线与 `getTeams`/`getArenaRooms`/`getRLScores` 等；REST 端点与 `api/src/routes` 的 method/请求体/响应对应关系逐条核对
 - SHA-1 / HMAC-SHA1 通过 RFC 3174/2202 测试向量；JWT 解码（含中文/过期/匿名）通过
 - COS 签名与官方 SDK 三组样例（put/get/head + 中文路径）完全一致：`node scripts/test_cos_signature.cjs`
+- 赛事与 Weekly 直连生产 Hasura GraphQL（与 web 同库实时同步，onShow 自动刷新 + 下拉刷新）
 
 以上校验已固化为脚本，并由 `.github/workflows/ci.yml` 在每次 push / PR 自动执行：`test_structure.cjs`（页面/导航/事件/组件）、`test_wxml_balance.cjs`、`test_bindings.cjs`（WXML↔JS 绑定）、`test_utils.cjs`（SHA1/JWT/Markdown/SSE）、`test_cos_signature.cjs`（无 SDK 时校验内置基准向量，CI 中安装官方 SDK 逐字节比对）。真机验收清单见 [docs/TESTING.md](./docs/TESTING.md)。
 

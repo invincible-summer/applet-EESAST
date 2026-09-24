@@ -13,13 +13,11 @@
       <empty text="暂无赛事" />
     </view>
     <view wx:for="{{filteredContests}}" wx:key="id" class="card contest-card" bind:tap="goDetail" data-id="{{item.id}}">
-      <view class="row-between">
-        <text class="contest-name">{{item.name}}</text>
-        <text class="tag {{item.status === 'ongoing' ? 'tag-success' : 'tag-gray'}}">{{item.statusText}}</text>
-      </view>
+      <text class="contest-name">{{item.name}}</text>
       <text class="contest-desc ellipsis-2">{{item.description}}</text>
       <view class="row contest-meta">
         <text class="text-3">{{item.start}} ~ {{item.end}}</text>
+        <text class="tag {{item.statusTag}}">{{item.statusText}}</text>
       </view>
     </view>
   </block>

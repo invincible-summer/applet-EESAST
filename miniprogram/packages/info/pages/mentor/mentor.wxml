@@ -117,7 +117,7 @@
 
   <!-- 申请弹层 -->
   <view wx:if="{{applying}}" class="modal-mask" bind:tap="closeApply">
-    <view class="modal card" catch:tap="">
+    <view class="modal card" catch:tap="noop">
       <text class="h3">{{curApplication ? '修改申请' : '新申请'}} · {{applyMentor.name}}</text>
       <text class="text-3" style="display:block; margin: 6rpx 0 20rpx;">{{applyMentor.dept}}</text>
 

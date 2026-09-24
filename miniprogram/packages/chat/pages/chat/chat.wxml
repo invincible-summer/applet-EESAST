@@ -50,7 +50,7 @@
 
   <!-- 会话抽屉 -->
   <view wx:if="{{drawerOpen}}" class="drawer-mask" bind:tap="toggleDrawer">
-    <view class="drawer" catch:tap="">
+    <view class="drawer" catch:tap="noop">
       <view class="row-between" style="padding: 24rpx; border-bottom: 1rpx solid var(--border);">
         <text class="h3">历史会话</text>
         <view class="btn btn-sm btn-ghost" bind:tap="newSession">＋ 新对话</view>

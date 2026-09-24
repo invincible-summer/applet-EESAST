@@ -40,7 +40,7 @@
 
   <!-- 申请表单弹层 -->
   <view wx:if="{{formVisible}}" class="modal-mask" bind:tap="closeForm">
-    <view class="modal card" catch:tap="">
+    <view class="modal card" catch:tap="noop">
       <text class="h3">{{editing ? '修改申请' : '新建申请'}}</text>
 
       <view class="form-item" style="margin-top: 22rpx;">

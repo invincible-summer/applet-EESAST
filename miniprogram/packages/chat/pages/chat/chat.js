@@ -287,5 +287,8 @@ Page({
 
   stop() {
     if (this.task) this.task.abort();
-  }
+  },
+
+  // 弹层阻止冒泡占位（catch:tap="noop"）
+  noop() {}
 });

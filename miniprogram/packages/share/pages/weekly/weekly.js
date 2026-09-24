@@ -8,7 +8,21 @@ Page({
   },
 
   onLoad() {
-    portalService
+    this.load();
+  },
+
+  // 每次进入/回到页面都重新拉取，保证与 web 侧同库数据同步
+  onShow() {
+    this.load();
+  },
+
+  onPullDownRefresh() {
+    this.load().then(() => wx.stopPullDownRefresh());
+  },
+
+  load() {
+    this.setData({ loading: true });
+    return portalService
       .getWeekly()
       .then((data) => {
         const weeklies = ((data && data.weekly) || []).map((w) => ({

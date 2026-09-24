@@ -251,5 +251,8 @@ Page({
   fileName(url) {
     if (!url) return "";
     return url.split("/").pop().split("?")[0];
-  }
+  },
+
+  // 弹层阻止冒泡占位（catch:tap="noop"）
+  noop() {}
 });

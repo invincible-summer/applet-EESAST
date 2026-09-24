@@ -281,5 +281,8 @@ Page({
 
   goChat() {
     wx.navigateTo({ url: "/packages/info/pages/mentor-chat/mentor-chat" });
-  }
+  },
+
+  // 弹层阻止冒泡占位（catch:tap="noop"）
+  noop() {}
 });

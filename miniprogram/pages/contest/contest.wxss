@@ -33,5 +33,7 @@
   margin-bottom: 14rpx;
 }
 .contest-meta {
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4rpx;
 }

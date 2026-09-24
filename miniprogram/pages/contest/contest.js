@@ -1,6 +1,13 @@
 const contestService = require("../../services/contest");
 const fmt = require("../../utils/format");
 
+// 状态 → 卡片右下角标签配色：进行中绿 / 未开始琥珀 / 已结束灰
+const STATUS_TAG = {
+  ongoing: "tag-success",
+  not_started: "tag-warning",
+  finished: "tag-gray"
+};
+
 Page({
   data: {
     loading: true,
@@ -21,15 +28,19 @@ Page({
     return contestService
       .getContests()
       .then((data) => {
-        const contests = (data && data.contest ? data.contest : []).map((c) => ({
-          id: c.id,
-          name: c.fullname,
-          description: c.description || "",
-          start: fmt.formatDate(c.start_date),
-          end: fmt.formatDate(c.end_date),
-          status: fmt.contestStatus(c.start_date, c.end_date),
-          statusText: fmt.CONTEST_STATUS_TEXT[fmt.contestStatus(c.start_date, c.end_date)]
-        }));
+        const contests = (data && data.contest ? data.contest : []).map((c) => {
+          const status = fmt.contestStatus(c.start_date, c.end_date);
+          return {
+            id: c.id,
+            name: c.fullname,
+            description: c.description || "",
+            start: fmt.formatDate(c.start_date),
+            end: fmt.formatDate(c.end_date),
+            status,
+            statusText: fmt.CONTEST_STATUS_TEXT[status],
+            statusTag: STATUS_TAG[status]
+          };
+        });
         this.setData({
           contests,
           filteredContests: this.applyFilter(contests, this.data.filter),
