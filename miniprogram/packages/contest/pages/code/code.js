@@ -312,7 +312,10 @@ Page({
       data: { team_id: teamId },
       silent: true
     }).then((res) => {
-      this.setData({ latestCode: (res && res.data) || null });
+      // 该接口返回 { data: [{ URL, updated_at, submission_count }] }（数组），
+      // 空数组也是 truthy，必须取 [0]，否则未提交时会被判定为"已提交"而走 update 分支
+      const list = (res && res.data) || null;
+      this.setData({ latestCode: Array.isArray(list) ? list[0] || null : list });
     });
     request({
       url: "/competition/get_team_software_final_one",
@@ -320,7 +323,8 @@ Page({
       data: { team_id: teamId },
       silent: true
     }).then((res) => {
-      this.setData({ latestFinal: (res && res.data) || null });
+      const list = (res && res.data) || null;
+      this.setData({ latestFinal: Array.isArray(list) ? list[0] || null : list });
     });
     request({
       url: "/competition/get_software_contest_ddl",
