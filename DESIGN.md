@@ -403,7 +403,28 @@ applet/
 | SSE 增量 UTF-8 解码（跨 chunk 多字节切割） | ✅ |
 | **COS 签名 vs 官方 cos-js-sdk-v5**（put/get/head + 中文键名） | ✅ **逐字节一致**（`scripts/test_cos_signature.cjs`） |
 
-实现过程中修正的关键问题：
+### 11.1 联调修复记录（2026-10-15）
+
+上线前用真实后端（`api.eesast.com`）做了一轮联调核对，修复以下问题（均已实测/静态验证）：
+
+| # | 文件 | 问题 | 修复 |
+|---|---|---|---|
+| 1 | `services/contest.js`、`contest/pages/intro` | `contest_time` 查询用了不存在的 `time` 字段，Hasura 报错导致赛事详情页 `Promise.all` 整体失败（整页只弹「赛事加载失败」） | 字段改为 `{event,start,end,description}` 并按 `start` 排序，时间线渲染起止区间 |
+| 2 | `contest/pages/code` | `get_team_software_code_one` 返回数组，被当对象使用；空数组 truthy 使未提交队伍走 update 分支 | 取 `data[0]`（兼容对象返回） |
+| 3 | `info/pages/mentor` | 页面闸门只判 `isTsinghua()`，而 `my_talk_records`/`my_member_chats` 后端仅允许 student，teacher/counselor 进入整页报错 | 闸门细化为 `role === "student"`；补 `isFreshman`/`isMember` 并按 web 语义条件展示谈话记录卡片 |
+| 4 | `info/pages/mentor` | 旧系统谈话记录（无学期）下载拼出 `…/talk//` 路径 | 回退到 `chat_record/{申请id}/[member/]` |
+| 5 | `contest/pages/arena` | 回放 COS 路径写成 `{赛事名}/arena/{room_id}.thuaipb` | 改为 `{赛事名}/arena/{room_id}/playback.thuaipb`（与 web RecordPage 一致）；下载入口仅对已结束对局展示 |
+| 6 | `share/pages/course-detail` | 评论只显示已精选，自己刚发的评论直接消失；`parent_uuid`/`replies` 未使用，楼中楼被平铺且无回复入口 | 保留「自己的未精选评论」并标注待审核；按 `parent_uuid` 组装一级回复并用 `<template>` 渲染；新增「回复」入口；点赞/编辑/删除改为在两层结构中查找 |
+| 7 | `pages/share` | `dataset.login` 布尔值被字符串化后误判需登录 | 统一按字符串判断 |
+
+新增校验脚本：
+
+```bash
+node scripts/test_bindings.cjs      # WXML ↔ JS 绑定一致性（字段/模板）
+node scripts/test_wxml_balance.cjs  # WXML 标签闭合
+```
+
+### 11.2 实现过程中修正的关键问题
 1. `hmacSha1Hex(key, message)` 参数顺序（SignKey 需以 SecretKey 为 key）
 2. COS 签名 pathname 使用**未编码原始路径**（与 SDK 一致），URL 才编码
 3. `/user/update` 的班级字段为 `className`（非 `class`），且不支持 phone/tsinghua_email
