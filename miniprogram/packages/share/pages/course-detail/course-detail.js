@@ -23,6 +23,7 @@ Page({
     dims: [],
     tab: "comments", // rating / comments
     comments: [],
+    commentCount: 0,
     commentInput: "",
     editingComment: null,
     replyTo: null
@@ -78,11 +79,12 @@ Page({
       silent: true
     }).then((res) => {
       const list = (res && res.course_comments) || [];
-      // 只展示已精选（display）或全部？非管理员只见 display=true
-      const comments = list
-        .filter((c) => c.display && !c.deleted)
+      // 与 web DiscussDrawer 一致：展示已精选的评论，外加「自己发的」未精选评论
+      const rows = list
+        .filter((c) => !c.deleted && (c.display || c.user_uuid === this.userUuid))
         .map((c) => ({
           uuid: c.uuid,
+          parentUuid: c.parent_uuid || "",
           userUuid: c.user_uuid,
           username: c.username || "匿名用户",
           comment: c.comment,
@@ -90,11 +92,42 @@ Page({
           likes: c.likes,
           stared: c.stared,
           liked: c.liked,
+          pending: !c.display,
           time: fmt.fromNow(c.created_at),
-          mine: c.user_uuid === this.userUuid
+          mine: c.user_uuid === this.userUuid,
+          children: []
         }));
-      this.setData({ comments });
+      // 组装父子关系：任意层级的回复都挂到顶层评论下，避免楼中楼被渲染成平铺
+      const byUuid = {};
+      rows.forEach((r) => (byUuid[r.uuid] = r));
+      const rootOf = (row) => {
+        let cur = row;
+        const guard = {};
+        while (cur.parentUuid && byUuid[cur.parentUuid] && !guard[cur.uuid]) {
+          guard[cur.uuid] = true;
+          cur = byUuid[cur.parentUuid];
+        }
+        return cur;
+      };
+      const comments = [];
+      rows.forEach((row) => {
+        const root = row.parentUuid ? rootOf(row) : row;
+        if (root === row) comments.push(row);
+        else root.children.push(row);
+      });
+      this.setData({ comments, commentCount: rows.length });
     });
+  },
+
+  /** 顶层评论与其回复里查找（评论列表已做嵌套，不能只查顶层） */
+  findComment(uuid) {
+    const top = this.data.comments;
+    for (let i = 0; i < top.length; i++) {
+      if (top[i].uuid === uuid) return top[i];
+      const child = (top[i].children || []).find((c) => c.uuid === uuid);
+      if (child) return child;
+    }
+    return null;
   },
 
   setTab(e) {
@@ -165,6 +198,13 @@ Page({
     this.setData({ commentInput: e.detail.value });
   },
 
+  /** 点「回复」：把该评论设为父级，输入区切换到回复态 */
+  onReply(e) {
+    if (!this.requireLogin()) return;
+    const { uuid, name } = e.currentTarget.dataset;
+    this.setData({ replyTo: { uuid, username: name }, editingComment: null });
+  },
+
   requireLogin() {
     if (!this.isLoggedIn) {
       wx.showToast({ title: "请先登录", icon: "none" });
@@ -216,7 +256,8 @@ Page({
   toggleLike(e) {
     if (!this.requireLogin()) return;
     const uuid = e.currentTarget.dataset.uuid;
-    const c = this.data.comments.find((x) => x.uuid === uuid);
+    const c = this.findComment(uuid);
+    if (!c) return;
     const liked = !c.liked;
     request({
       url: "/course/comments/likes/toggle",
@@ -231,7 +272,8 @@ Page({
   toggleStar(e) {
     if (!this.requireLogin()) return;
     const uuid = e.currentTarget.dataset.uuid;
-    const c = this.data.comments.find((x) => x.uuid === uuid);
+    const c = this.findComment(uuid);
+    if (!c) return;
     const stared = !c.stared;
     request({
       url: "/course/comments/stars/toggle",
@@ -245,14 +287,14 @@ Page({
 
   editComment(e) {
     const uuid = e.currentTarget.dataset.uuid;
-    const c = this.data.comments.find((x) => x.uuid === uuid);
+    const c = this.findComment(uuid);
     if (!c || !c.mine) return; // 仅允许编辑自己的评论
     this.setData({ editingComment: uuid, commentInput: c.comment });
   },
 
   deleteComment(e) {
     const uuid = e.currentTarget.dataset.uuid;
-    const c = this.data.comments.find((x) => x.uuid === uuid);
+    const c = this.findComment(uuid);
     if (!c || !c.mine) return; // 仅允许删除自己的评论
     wx.showModal({
       title: "删除评论",
