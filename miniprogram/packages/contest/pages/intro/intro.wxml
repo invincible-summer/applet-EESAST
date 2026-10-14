@@ -67,11 +67,11 @@
     <view class="card" wx:if="{{times.length > 0}}">
       <text class="h3" style="display:block; margin-bottom: 20rpx;">关键节点</text>
       <view class="timeline">
-        <view wx:for="{{times}}" wx:key="id" class="tl-item">
+        <view wx:for="{{times}}" wx:key="event" class="tl-item">
           <view class="tl-dot"></view>
           <view class="col flex-1">
             <text class="tl-event">{{item.event}}</text>
-            <text class="text-3">{{item.time}}</text>
+            <text class="text-3">{{item.start}} ~ {{item.end}}</text>
           </view>
         </view>
       </view>

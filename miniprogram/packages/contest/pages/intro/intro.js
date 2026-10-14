@@ -56,9 +56,10 @@ Page({
           },
           statusText: fmt.CONTEST_STATUS_TEXT[status],
           times: ((times && times.contest_time) || []).map((t) => ({
-            id: t.id,
             event: t.event,
-            time: fmt.formatDateTime(t.time)
+            start: fmt.formatDateTime(t.start),
+            end: fmt.formatDateTime(t.end),
+            description: t.description || ""
           })),
           teamCount: teamNum.contest_team_aggregate.aggregate.count,
           memberCount: memberNum.contest_team_member_aggregate.aggregate.count,
