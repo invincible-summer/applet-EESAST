@@ -14,7 +14,10 @@ const U = path.join(__dirname, "..", "miniprogram", "utils");
 const { sha1Hex, hmacSha1Hex } = require(path.join(U, "sha1.js"));
 const { decodeJwt, parseUser, ANONYMOUS_UUID } = require(path.join(U, "jwt.js"));
 const { parseMarkdown, inlineToHtml } = require(path.join(U, "markdown.js"));
-const { createUtf8Decoder } = require(path.join(U, "sse.js"));
+const { createUtf8Decoder, createSseParser } = require(path.join(U, "sse.js"));
+const { parseNoticeFiles } = require(path.join(U, "notice-files.js"));
+global.wx = global.wx || { getStorageSync: () => "", setStorageSync: () => {}, removeStorageSync: () => {} };
+const { parseListBucketXml } = require(path.join(U, "cos.js"));
 const { contestStatus } = require(path.join(U, "format.js"));
 
 let pass = 0;
@@ -132,5 +135,58 @@ check("赛事：已结束", contestStatus("2020-01-01T00:00:00Z", "2020-12-31T00
 check("赛事：未开始", contestStatus("2099-01-01T00:00:00Z", "2099-12-31T00:00:00Z"), "not_started");
 check("赛事：进行中", contestStatus("2020-01-01T00:00:00Z", "2099-12-31T00:00:00Z"), "ongoing");
 
+
+/* ---------- 公告附件归一化（三种历史形态） ---------- */
+check(
+  "附件：门户 [{filename,url}]",
+  parseNoticeFiles(JSON.stringify([{ filename: "a.pdf", url: "/upload/a.pdf" }]), "upload/"),
+  [{ name: "a.pdf", key: "upload/a.pdf", url: "" }]
+);
+check(
+  "附件：赛事 [{filename}]",
+  parseNoticeFiles(JSON.stringify([{ filename: "b.docx" }]), "THUAI7/notice/"),
+  [{ name: "b.docx", key: "THUAI7/notice/b.docx", url: "" }]
+);
+check(
+  "附件：旧字符串形态",
+  parseNoticeFiles(JSON.stringify(["x/y/c.zip"]), "upload/"),
+  [{ name: "c.zip", key: "x/y/c.zip", url: "" }]
+);
+check("附件：坏 JSON 返回空", parseNoticeFiles("{bad", "upload/"), []);
+check("附件：空值返回空", parseNoticeFiles("", "upload/"), []);
+
+/* ---------- COS GET Bucket XML ---------- */
+const listBucketXml = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  "<ListBucketResult>",
+  "<Prefix>avatar/abc/</Prefix>",
+  "<IsTruncated>true</IsTruncated>",
+  "<NextMarker>avatar/abc/b.png</NextMarker>",
+  "<Contents><Key>avatar/abc/a.png</Key><LastModified>2026-10-20T10:00:00.000Z</LastModified></Contents>",
+  "<Contents><Key>avatar/abc/b&amp;c.png</Key><LastModified>2026-10-21T10:00:00.000Z</LastModified></Contents>",
+  "</ListBucketResult>",
+].join("\n");
+const bucket = parseListBucketXml(listBucketXml);
+check("COS XML 对象数", bucket.contents.length, 2);
+check("COS XML Key", bucket.contents[0].Key, "avatar/abc/a.png");
+check("COS XML 实体还原", bucket.contents[1].Key, "avatar/abc/b&c.png");
+check("COS XML LastModified", bucket.contents[1].LastModified, "2026-10-21T10:00:00.000Z");
+check("COS XML IsTruncated", bucket.truncated, true);
+check("COS XML NextMarker", bucket.nextMarker, "avatar/abc/b.png");
+check("COS XML 空响应", parseListBucketXml("").contents.length, 0);
+
+/* ---------- SSE 事件切分（CRLF / 跨 chunk） ---------- */
+function collectSse(chunks, flush) {
+  const events = [];
+  const parser = createSseParser((e) => events.push(e));
+  chunks.forEach((c) => parser.push(c));
+  if (flush !== false) parser.flush();
+  return events;
+}
+check("SSE LF 切分", collectSse(["data: a\n\ndata: b\n\n"]), ["data: a", "data: b"]);
+check("SSE CRLF 切分", collectSse(["data: a\r\n\r\ndata: b\r\n\r\n"]), ["data: a", "data: b"]);
+check("SSE CRLF 跨 chunk", collectSse(["data: a\r", "\n\r\ndata: b\r\n\r\n"]), ["data: a", "data: b"]);
+check("SSE 末尾无空行", collectSse(["data: last"]), ["data: last"]);
+check("SSE 不完整事件", collectSse(["data: partial"], false), []);
 console.log(`\n通过 ${pass} 项，失败 ${fail} 项`);
 process.exit(fail ? 1 : 0);

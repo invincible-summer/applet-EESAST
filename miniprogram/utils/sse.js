@@ -60,6 +60,57 @@ function createUtf8Decoder() {
 }
 
 /**
+ * SSE 事件切分器（与 wx.request 解耦，便于单测）
+ * - 统一 CRLF / CR / LF 三种行尾（SSE 规范允许，部分网关会发 CRLF）
+ * - 事件以空行分隔；跨 chunk 的 \r\n 也能正确拼接
+ * @param {function(string)} onEvent 收到一条完整事件（原始文本）
+ */
+function createSseParser(onEvent) {
+  let buffer = "";
+  let pendingCR = false;
+
+  function drain() {
+    let idx;
+    while ((idx = buffer.indexOf("\n\n")) >= 0) {
+      const rawEvent = buffer.slice(0, idx);
+      buffer = buffer.slice(idx + 2);
+      if (rawEvent.trim()) onEvent(rawEvent);
+    }
+  }
+
+  return {
+    push(chunk) {
+      let text = String(chunk);
+      if (pendingCR) {
+        // 上一条事件的结尾 \r：补成 \n；若本块以 \n 开头（跨块 CRLF）则吞掉
+        buffer += "\n";
+        if (text.charAt(0) === "\n") text = text.slice(1);
+        pendingCR = false;
+      }
+      if (text.charAt(text.length - 1) === "\r") {
+        text = text.slice(0, -1);
+        pendingCR = true;
+      }
+      buffer += text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+      drain();
+    },
+    /** 流结束时处理没有以空行收尾的最后一条事件 */
+    flush() {
+      if (pendingCR) {
+        buffer += "\n";
+        pendingCR = false;
+      }
+      drain();
+      if (buffer.trim()) {
+        const rawEvent = buffer;
+        buffer = "";
+        onEvent(rawEvent);
+      }
+    }
+  };
+}
+
+/**
  * 发起 SSE 流式请求
  * @param {object} opts
  * @param {string} opts.url
@@ -73,8 +124,8 @@ function createUtf8Decoder() {
 function sseRequest(opts) {
   const { url, data, token, onData, onDone, onError } = opts;
   const decoder = createUtf8Decoder();
-  let buffer = "";
   let done = false;
+  const parser = createSseParser((rawEvent) => handleEvent(rawEvent));
 
   const task = wx.request({
     url,
@@ -89,8 +140,10 @@ function sseRequest(opts) {
     timeout: 300000,
     responseType: "text",
     success(res) {
+      if (done) return; // [DONE] 已触发过 onDone
       // 非流式降级：部分网关可能一次性返回
       if (res.statusCode !== 200) {
+        done = true;
         const e = {
           statusCode: res.statusCode,
           message: (res.data && (res.data.error || res.data.message)) || `请求失败 (${res.statusCode})`
@@ -105,6 +158,10 @@ function sseRequest(opts) {
           onData(res.data);
         }
       }
+      // 处理没有以空行结尾的最后一条事件（可能含 data: [DONE]）
+      parser.flush();
+      if (done) return;
+      done = true;
       if (onDone) onDone();
     },
     fail(err) {
@@ -116,15 +173,7 @@ function sseRequest(opts) {
 
   if (task && task.onChunkReceived) {
     task.onChunkReceived((res) => {
-      const text = decoder.push(new Uint8Array(res.data));
-      buffer += text;
-      // SSE 事件以空行分隔
-      let idx;
-      while ((idx = buffer.indexOf("\n\n")) >= 0) {
-        const rawEvent = buffer.slice(0, idx);
-        buffer = buffer.slice(idx + 2);
-        handleEvent(rawEvent);
-      }
+      parser.push(decoder.push(new Uint8Array(res.data)));
     });
   }
 
@@ -161,4 +210,4 @@ function sseRequest(opts) {
   };
 }
 
-module.exports = { sseRequest, createUtf8Decoder };
+module.exports = { sseRequest, createUtf8Decoder, createSseParser };
