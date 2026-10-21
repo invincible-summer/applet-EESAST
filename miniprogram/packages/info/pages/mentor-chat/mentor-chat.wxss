@@ -1,8 +1,12 @@
 .chat-page {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 40rpx);
   padding: 0;
+}
+/* 聊天视图：整页定高，消息区 flex 撑满（替代 calc 魔法数，键盘弹起不错位） */
+.chat-fixed {
+  height: 100vh;
+  box-sizing: border-box;
 }
 .chat-page > .empty {
   flex: 1;
@@ -55,7 +59,7 @@
 }
 .msg-list {
   flex: 1;
-  height: calc(100vh - 320rpx);
+  min-height: 0;
   padding: 24rpx;
   box-sizing: border-box;
 }

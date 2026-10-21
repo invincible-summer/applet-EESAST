@@ -40,13 +40,6 @@
         "pages/course-detail/course-detail",
         "pages/weekly/weekly"
       ]
-    },
-    {
-      "root": "packages/chat",
-      "name": "chat",
-      "pages": [
-        "pages/chat/chat"
-      ]
     }
   ],
   "preloadRule": {

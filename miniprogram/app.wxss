@@ -61,6 +61,24 @@ page {
   margin: 0 auto;
 }
 
+/* 小屏（≤360px，如 iPhone SE / 窄屏 Android）：收紧全局留白 */
+@media (max-width: 360px) {
+  .page {
+    padding: 16rpx;
+  }
+  .card {
+    padding: 22rpx;
+    margin-bottom: 18rpx;
+    border-radius: 16rpx;
+  }
+  .btn {
+    height: 80rpx;
+  }
+  .form-item {
+    margin-bottom: 22rpx;
+  }
+}
+
 .card {
   background: var(--card);
   border-radius: 20rpx;

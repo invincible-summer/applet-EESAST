@@ -63,7 +63,7 @@ jobs:
             echo "::notice::scripts/test_bindings.cjs 尚未合入当前分支，跳过"
           fi
 
-      - name: 工具模块单测（SHA1/JWT/Markdown/SSE）
+      - name: 工具模块单测（SHA1/JWT/Markdown）
         run: node scripts/test_utils.cjs
 
   cos-signature:

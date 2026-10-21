@@ -12,8 +12,7 @@
 | 赛事互动 | 赛事列表（状态筛选、卡片右下角状态角标）、赛事详情（简介/时间线/统计）、公告列表与 Markdown 详情（附件下载）、组队（创建/邀请码加入/队伍管理/退出解散）、代码提交（THUAI 上传+编译状态轮询+选码；SOFT/RL 链接提交）、天梯/RL 积分榜、对战记录（轮询刷新/回放下载） |
 | 信息化平台 | 门户公告（5 分类）、新生导师制（导师列表/申请/谈话记录上传下载）、导师-学生私信、荣誉（奖学金）申请（附件 COS 直传） |
 | 资源共享 | 课程评测（搜索/六维评分/评论/点赞收藏）、SAST Weekly |
-| AI 对话 | 多会话大模型对话（SSE 流式、深度思考、配额显示、会话本地保存） |
-| 我的 | 账号密码登录、分步注册（邮箱验证码）、找回密码、个人资料编辑、头像上传、清华邮箱认证（升级学生身份）、LLM Token、注销账号、退出登录 |
+| 我的 | 账号密码登录、分步注册（邮箱验证码）、找回密码、个人资料编辑、头像上传、清华邮箱认证（升级学生身份）、注销账号、退出登录 |
 
 暂不包含（详见 DESIGN.md §4.2）：Unity WebGL 试玩/直播/在线回放（平台不支持，引导网页端）、赛事管理端、微信一键登录（需后端改造）。
 
@@ -24,6 +23,18 @@
 3. 项目零 npm 依赖，导入即可预览
 4. 开发者工具中请保持「不校验合法域名」仅用于本地调试（已放在 `project.private.config.json`，该文件不入库）
 
+### WSL 环境：启动 Windows 侧开发者工具真机调试
+
+在 WSL 中开发时，用 `scripts/devtools.sh` 一键把项目镜像同步到 Windows 盘并启动微信开发者工具（工具对 `\\wsl.localhost` UNC 路径支持不稳，故先镜像到 `D:\wechat-aaplet\eesast-applet`，镜像已开热重载，重复 sync 自动重编译）：
+
+```bash
+scripts/devtools.sh open     # 同步镜像并启动工具打开项目（GUI 顶部点「真机调试」扫码调试）
+scripts/devtools.sh preview  # 同步并生成真机预览二维码（微信扫码）
+scripts/devtools.sh sync     # 仅同步镜像
+```
+
+首次使用需在工具 GUI 中开启 **设置 → 安全设置 → 服务端口**；工具安装路径变化时修改脚本头部 `IDE_BASE_W` / `IDE_REL` 常量。
+
 ## 上线前配置清单（管理员操作）
 
 1. 注册小程序取得正式 AppID（类目建议：教育 > 在线教育，或工具 > 信息查询），替换 `project.config.json`
@@ -32,7 +43,7 @@
    - `https://eesast-1255334966.cos.ap-beijing.myqcloud.com`（COS 直传/下载）
    - `https://static.eesast.com`（静态图片）
 3. 申报《用户隐私保护指引》（收集：邮箱、姓名、学号、院系班级）
-4. 基础库要求 ≥ 2.20.1（`enableChunked` 流式对话），推荐 ≥ 2.32.3
+4. 基础库要求 ≥ 2.10.0，推荐 ≥ 2.32.3
 
 ## 目录结构
 
@@ -44,7 +55,7 @@ applet/
 └── miniprogram/
     ├── app.{js,json,wxss}     # 5-tab 应用骨架，darkmode + theme.json
     ├── config/index.js        # API/COS/角色常量（与 web .env 对齐）
-    ├── utils/                 # request/graphql/auth/cos/sha1/markdown/sse/poll
+    ├── utils/                 # request/graphql/auth/cos/sha1/markdown/poll
     ├── services/              # GraphQL 查询（复刻 web/src/graphql）
     ├── components/            # markdown 渲染 / empty 空态
     ├── data/                  # 首页静态数据（与 web 同源）
@@ -52,13 +63,12 @@ applet/
     └── packages/              # 分包
         ├── contest/           # intro/notice/notice-detail/team/code/score/arena
         ├── info/              # mentor/mentor-chat/honor
-        ├── share/             # course/course-detail/weekly
-        └── chat/              # LLM 对话
+        └── share/             # course/course-detail/weekly
 ```
 
 ## 技术与安全要点
 
-- **零 npm 依赖**：COS XML API 签名（SHA-1/HMAC-SHA1）、JWT 解码、Markdown 解析、SSE 增量 UTF-8 解码均为纯 JS 自实现；COS 签名已与官方 `cos-js-sdk-v5` 算法逐字节比对一致（含中文键名场景）
+- **零 npm 依赖**：COS XML API 签名（SHA-1/HMAC-SHA1）、JWT 解码、Markdown 解析均为纯 JS 自实现；COS 签名已与官方 `cos-js-sdk-v5` 算法逐字节比对一致（含中文键名场景）
 - **凭证安全**：JWT 仅存微信沙箱存储；验证码 JWT 只存内存；COS 仅用后端发放的 STS 临时密钥（按前缀最小授权）；密码永不落盘
 - **权限双闸**：前端按 `userRoles`/`tsinghuaRoles`/`counselor` 分级拦截，后端 Hasura 行级权限强制兜底；管理端接口一律不接入
 - **不接入的原系统危险端点**：`/notification/broadcast`、`/files/upload`（无鉴权）
@@ -66,7 +76,7 @@ applet/
 
 ## 已验证
 
-- 全部 JS `node --check` 通过；全部 JSON 可解析；41 个 JS 模块在 stub 环境加载成功（`node scripts/test_module_load.cjs`）
+- 全部 JS `node --check` 通过；全部 JSON 可解析；40 个 JS 模块在 stub 环境加载成功（`node scripts/test_module_load.cjs`）
 - 24 个 WXML 标签闭合平衡（`test_wxml_balance.cjs`）；全部 bind/catch 事件处理器与 JS 方法一一对应、组件引用路径有效（`test_wxml_handlers.cjs`）
 - **WXML ↔ JS 绑定一致性**：24 个 WXML 的 `{{}}` 字段与 `<template>` 调用均可追溯到 JS 数据源，0 问题：`node scripts/test_bindings.cjs`
 - **接口实测**（对 `api.eesast.com` 线上）：匿名角色可读的全部 GraphQL 查询逐条验证通过，含 9 个赛事的 `contest_time` 时间线与 `getTeams`/`getArenaRooms`/`getRLScores` 等；REST 端点与 `api/src/routes` 的 method/请求体/响应对应关系逐条核对
@@ -74,7 +84,7 @@ applet/
 - COS 签名与官方 SDK 三组样例（put/get/head + 中文路径）完全一致：`node scripts/test_cos_signature.cjs`
 - 赛事与 Weekly 直连生产 Hasura GraphQL（与 web 同库实时同步，onShow 自动刷新 + 下拉刷新）
 
-以上校验已固化为脚本，并由 `.github/workflows/ci.yml` 在每次 push / PR 自动执行：`test_structure.cjs`（页面/导航/事件/组件）、`test_wxml_balance.cjs`、`test_bindings.cjs`（WXML↔JS 绑定）、`test_utils.cjs`（SHA1/JWT/Markdown/SSE）、`test_cos_signature.cjs`（无 SDK 时校验内置基准向量，CI 中安装官方 SDK 逐字节比对）。真机验收清单见 [docs/TESTING.md](./docs/TESTING.md)。
+以上校验已固化为脚本，并由 `.github/workflows/ci.yml` 在每次 push / PR 自动执行：`test_structure.cjs`（页面/导航/事件/组件）、`test_wxml_balance.cjs`、`test_bindings.cjs`（WXML↔JS 绑定）、`test_utils.cjs`（SHA1/JWT/Markdown）、`test_cos_signature.cjs`（无 SDK 时校验内置基准向量，CI 中安装官方 SDK 逐字节比对）。真机验收清单见 [docs/TESTING.md](./docs/TESTING.md)。
 
 ## 约束说明
 

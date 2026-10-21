@@ -37,3 +37,16 @@
   align-items: center;
   margin-top: 4rpx;
 }
+
+/* 宽屏（≥600px）：赛事列表两列网格 */
+@media (min-width: 600px) {
+  .contest-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24rpx;
+    align-items: start;
+  }
+  .contest-list .contest-card {
+    margin-bottom: 0;
+  }
+}

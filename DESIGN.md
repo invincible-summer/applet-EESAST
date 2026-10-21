@@ -50,7 +50,7 @@ eesast.com
 
 **文件存储**：腾讯云 COS（bucket `eesast-1255334966`，region `ap-beijing`），后端 `GET /static/{prefix}` 按路径前缀+角色发放 **STS 临时密钥**（返回 `{credentials:{tmpSecretId,tmpSecretKey,sessionToken}, startTime, expiredTime}`），前端用临时密钥直传 COS。静态资源 CDN：`https://static.eesast.com`。
 
-**实时能力**：Web 端用 GraphQL Subscription（编译状态、对战房间）；小程序侧以**轮询**替代（见 §5.4）。
+**实时能力**：Web 端用 GraphQL Subscription（编译状态、对战房间）；小程序侧以**轮询**替代（见 §5.2）。
 
 ### 1.2 调研中发现的原系统安全隐患（小程序侧规避）
 
@@ -68,24 +68,23 @@ eesast.com
 
 | 方案 | 说明 | 优势 | 劣势 | 结论 |
 |---|---|---|---|---|
-| **原生小程序**（WXML/WXSS/JS） | 微信官方框架 | 100% 贴合小程序能力（分包、tabBar、暗色模式、chunked 流式请求）；零构建链；任何版本开发者工具可直接打开 | 无法复用 React 代码 | **✅ 采用** |
+| **原生小程序**（WXML/WXSS/JS） | 微信官方框架 | 100% 贴合小程序能力（分包、tabBar、暗色模式、rpx）；零构建链；任何版本开发者工具可直接打开 | 无法复用 React 代码 | **✅ 采用** |
 | Taro 3/4（React DSL） | 跨端编译到微信/支付宝/H5 | 可复用 web 的 React 组件思路与 TS 类型 | Antd/styled-components 无法直接复用，仍需重写 UI；引入 webpack 构建链与版本耦合风险 | ✗ |
 | uni-app（Vue DSL） | 跨端 | 生态大 | 同上，且团队无 Vue 代码可复用 | ✗ |
 | web-view 套壳 | 小程序内嵌 eesast.com | 开发量最小 | 需配置业务域名且域名须主体校验；体验差；Unity/桌面交互在小屏不可用；本质不是"小程序化" | ✗ |
 
 **结论：原生小程序 + CommonJS 模块化 + 零 npm 依赖。**
-理由：① 本项目是"功能呈现"而非"代码移植"，Web 端组件（Antd/Apollo/Unity）均无法直接复用，跨端框架无收益；② 原生对小程序独有能力（`enableChunked` SSE、分包、`darkmode`、rpx）支持最直接；③ 零依赖意味着克隆即可在微信开发者工具打开运行，无 `npm install`/构建步骤。
+理由：① 本项目是"功能呈现"而非"代码移植"，Web 端组件（Antd/Apollo/Unity）均无法直接复用，跨端框架无收益；② 原生对小程序独有能力（分包、`darkmode`、rpx）支持最直接；③ 零依赖意味着克隆即可在微信开发者工具打开运行，无 `npm install`/构建步骤。
 
 ### 2.2 关键平台约束（影响设计的硬性规则）
 
 1. **服务器域名白名单**：小程序正式运行时，`wx.request`/`wx.uploadFile`/`wx.downloadFile` 只能访问在小程序管理后台配置过的**https 已备案域名**。本项目需配置（见 §7.4 部署清单）。
 2. **包体限制**：主包 ≤ 2MB（启用分包时单个分包 ≤ 2MB，总包 ≤ 30MB）→ 采用**分包加载**。
 3. **tabBar 页必须在主包**，tabBar 2~5 个，iconPath 仅支持本地 png。
-4. **无 DOM/无 TextDecoder/无 fetch**：SSE 流式需用 `wx.request({enableChunked:true})` + `onChunkReceived`（ArrayBuffer），自写增量 UTF-8 解码器。
-5. **WebSocket 可用**（`wx.connectSocket`），但 graphql-ws 协议需自行实现且后台连接易被回收 → 实时数据用**页面级轮询**，成本更低更稳。
-6. **CORS 不适用**：小程序非浏览器，服务端 CORS 白名单（`eesast.com` 等）不拦截小程序请求；真正门槛是上述域名白名单。
-7. **微信登录需后端改造**（`code2session` + AppSecret），受"禁止修改原仓库"约束 → v1 使用**账号密码登录**（见 §6.2）。
-8. **个人隐私合规**：收集邮箱/学号/姓名需在小程序后台申报《用户隐私保护指引》；`wx.getPrivacySetting` 处理授权弹窗（基础库 2.32.3+）。
+4. **WebSocket 可用**（`wx.connectSocket`），但 graphql-ws 协议需自行实现且后台连接易被回收 → 实时数据用**页面级轮询**，成本更低更稳。
+5. **CORS 不适用**：小程序非浏览器，服务端 CORS 白名单（`eesast.com` 等）不拦截小程序请求；真正门槛是上述域名白名单。
+6. **微信登录需后端改造**（`code2session` + AppSecret），受"禁止修改原仓库"约束 → v1 使用**账号密码登录**（见 §6.2）。
+7. **个人隐私合规**：收集邮箱/学号/姓名需在小程序后台申报《用户隐私保护指引》；`wx.getPrivacySetting` 处理授权弹窗（基础库 2.32.3+）。
 
 ### 2.3 屏幕适配调研（结论）
 
@@ -102,10 +101,10 @@ eesast.com
 ```
 ┌───────────────────────────────────────────────┐
 │              微信小程序（本仓库 applet）          │
-│  原生框架 · 主包 + 4 分包 · 深色模式 · rpx 适配    │
+│  原生框架 · 主包 + 3 分包 · 深色模式 · rpx 适配    │
 │                                              │
 │  utils: request / graphql / auth / cos /      │
-│         markdown / sse / poll / format        │
+│         markdown / poll / format             │
 └──────────────┬────────────────────────────────┘
                │ HTTPS (wx.request, Bearer JWT)
                ▼
@@ -114,7 +113,7 @@ eesast.com
    │ ├─ /v1/graphql  → Hasura(行级权限)   │
    │ └─ /user /team /code /arena /       │
    │      /application /notice /course / │
-   │      /share /weekly /llm /static    │
+   │      /share /weekly /static               │
    └───────┬───────────────────┬────────┘
            │ STS 临时密钥        │
            ▼                   ▼
@@ -148,7 +147,6 @@ eesast.com
 | 荣誉（奖学金）申请（学生） | 分包荣誉页：时间表/类型/我的申请/提交(陈述+附件)/撤销 | REST `/application/info/honor`、`honor_application` CRUD、COS 上传 |
 | 课程评测（列表/详情/评论/点赞收藏/六维评分） | 分包课程页 + 详情页（评分滑条 + 评论楼中楼） | `course`/`course_rating` GraphQL、REST `/course/comments/*` |
 | SAST Weekly | 分包 Weekly 列表（标题/日期/标签 + 复制链接） | `GetWeekly` |
-| LLM 大模型对话 | 分包对话页：多会话(本地存储)、模型选择、SSE 流式、配额显示 | `llm_list` GraphQL、REST `/llm/status`、`/llm/chat`(chunked) |
 | 登录/注册/找回密码 | 我的 tab：登录表单；分包注册向导(身份→邮箱→验证码→信息→密码)；重置密码页 | `/user/login /send-code /verify /register /change-password` |
 | 个人资料（查看/编辑/头像上传/换绑邮箱/注销） | 我的 tab（已登录态）：资料编辑、头像裁剪上传、修改密码、注销、退出 | `GetProfile`、`/user/update /edit-profile /delete`、COS |
 | 院系/班级数据 | 表单下拉 | `department`/`classes` GraphQL |
@@ -182,14 +180,13 @@ applet/
     ├── config/index.js       # API_BASE / GRAPHQL / STATIC / COS 常量
     ├── assets/               # logo、tab 图标
     ├── data/                 # 首页静态数据（news/divisions/displayWall，与 web 同源）
-    ├── utils/                # request/graphql/auth/cos/sha1/markdown/sse/poll/format
+    ├── utils/                # request/graphql/auth/cos/sha1/markdown/poll/format
     ├── components/           # markdown / empty / loading / tag / section 等通用组件
     ├── pages/                # 主包页面（tab 页 + 登录注册）
     └── packages/             # 分包
         ├── contest/          # intro / notice / notice-detail / team / code / score / arena
         ├── info/             # mentor / mentor-chat / honor
-        ├── share/            # course / course-detail / weekly
-        └── chat/             # chat（LLM）
+        └── share/            # course / course-detail / weekly
 ```
 
 **分包与预加载**（主包预算 < 500KB，图标全部本地、CDN 图片不打包）：
@@ -202,8 +199,7 @@ applet/
 "subPackages": [
   {"root":"packages/contest","pages":[...]},
   {"root":"packages/info","pages":[...]},
-  {"root":"packages/share","pages":[...]},
-  {"root":"packages/chat","pages":[...]}
+  {"root":"packages/share","pages":[...]}
 ],
 "preloadRule": { "pages/contest/contest": {"network":"all","packages":["packages/contest"]} }
 ```
@@ -234,15 +230,7 @@ applet/
 - **下载/预签名 URL**：同算法对 GET 生成带签名的临时 URL（默认 2h），用于附件下载（`wx.downloadFile` + `wx.openDocument`）与图片展示
 - **凭证缓存**：按 prefix 缓存 STS 至 `expiredTime - 60s`，避免重复申请
 
-### 5.4 LLM 流式对话（`utils/sse.js`）
-
-- `wx.request({url: /llm/chat, enableChunked: true, responseType: 'arraybuffer'…})`
-- `onChunkReceived` 收 ArrayBuffer → **增量 UTF-8 解码器**（跨 chunk 多字节安全）→ 按行解析 `data: {json}` / `data: [DONE]`（SSE）
-- 回调上屏 `content`/`reasoning`（深度思考折叠块）；`abort` 支持（RequestTask.abort 保留半截回答）
-- 认证：与 web 一致 `llmToken = base64(uuid)`；401/402/403/429 分别提示（重置/配额超限/无权限/限流）
-- 会话保存于本地存储 `llm_sessions_{uuid}`（与 web localStorage 语义一致，微信侧为沙箱存储）
-
-### 5.5 Markdown 渲染（`utils/markdown.js` + `components/markdown`）
+### 5.4 Markdown 渲染（`utils/markdown.js` + `components/markdown`）
 
 公告/赛事简介/荣誉陈述为 Markdown。自研轻量解析器：
 - 块级：标题 h1-h4、无序/有序列表、代码块、引用、分割线、表格（转简单网格）、图片、段落
@@ -250,7 +238,7 @@ applet/
 - 块级用原生 WXML 渲染（长列表性能好、可点击复制），行内富文本转有限 HTML 交给 `rich-text`
 - 图片走预签名 URL 或 CDN 域名，自动限宽
 
-### 5.6 状态管理
+### 5.5 状态管理
 
 不引入状态库。两级方案：
 - **全局**：`app.globalData`（token、用户信息、主题）+ 事件总线（`auth:expired`、`auth:login`、`auth:logout`）
@@ -270,7 +258,7 @@ applet/
 | 密码 | 密码仅在登录/改密请求体中出现（bcrypt 在服务端），本地**绝不**存储明文密码；登录表单不提供"记住密码" |
 | 验证码 JWT | 与 web 一致：10min 短 token，仅存内存（页面级变量），不落盘 |
 | COS | 只用 STS 临时密钥（≤2h、按前缀最小授权），密钥只在内存；预签名 URL 短时效；**无任何永久密钥进入客户端** |
-| 注销 | `POST /user/delete` 成功后立即清空 storage 中 token/用户/LLM 会话并回首页 |
+| 注销 | `POST /user/delete` 成功后立即清空 storage 中 token/用户/资料缓存并回首页 |
 
 ### 6.2 认证与账号
 
@@ -288,7 +276,6 @@ applet/
 | 荣誉申请读写 | 仅 student 本人 | Hasura `(student_uuid == user-id)` 行级 + REST 校验 |
 | 导师私信 | 仅配对双方 | `mentor_message` from/to 行级过滤 |
 | 课程评论/评分 | 登录（courseRoles） | REST `authenticate` |
-| LLM | 登录 + 配额 | `/llm/*` quota/限流 |
 
 ### 6.4 输入与内容安全
 
@@ -313,7 +300,7 @@ applet/
  轮播        赛事卡片列表   公告分类列表   资源导航       未登录:登录表单
  部门横滑    →详情分包页    →导师/荣誉    →课程评测      已登录:资料/头像/
  赛事墙      (介绍/公告/    分包页        →Weekly      改密/注销/退出
- LLM入口     组队/代码/                  →LLM对话
+             组队/代码/
              榜单/对战)
 ```
 
@@ -353,7 +340,7 @@ applet/
 | M2 | 主包 | 首页、赛事列表、信息化公告、资源导航、登录/注册/找回/我的 | 核心浏览+账号闭环 |
 | M3 | contest 分包 | 详情/公告/组队/代码/榜单/对战记录 | 赛事闭环（不含管理端） |
 | M4 | info 分包 | 导师申请/导师聊天/荣誉申请 | 信息化闭环（学生视图） |
-| M5 | share+chat 分包 | 课程评测/详情/Weekly/LLM 对话 | 全功能覆盖 |
+| M5 | share 分包 | 课程评测/详情/Weekly | 全功能覆盖 |
 | M6 | 验证 | 全量 JS `node --check`、JSON 校验、真机预览清单、README | 可交付仓库 |
 
 ---
@@ -377,7 +364,6 @@ applet/
 |---|---|---|
 | 域名白名单未配置时真机不可用 | 开发者工具可勾选"不校验"调试；真机需 §9.2 完成 | README 置顶说明 |
 | 服务端无微信登录 | 用户需输入网页端账号 | 文档说明；预留 auth 扩展点 |
-| 原 API 移动端可用性（SSE/大响应） | LLM 流式在弱网体验 | 已实现 chunk 解析容错 + 失败降级为一次性响应 |
 | Subscription 不可用 | 实时性下降 | 轮询替代（页面级，onHide 暂停） |
 | 包体 | 主包超限 | 已分包 + 零 npm + CDN 图片 |
 
@@ -400,7 +386,6 @@ applet/
 | SHA-1 / HMAC-SHA1（RFC 3174 / RFC 2202 向量） | ✅ |
 | JWT 解码（过期/匿名/中文 payload） | ✅ |
 | Markdown 解析（块级/行内/转义防注入） | ✅ |
-| SSE 增量 UTF-8 解码（跨 chunk 多字节切割） | ✅ |
 | **COS 签名 vs 官方 cos-js-sdk-v5**（put/get/head + 中文键名） | ✅ **逐字节一致**（`scripts/test_cos_signature.cjs`） |
 
 ### 11.1 联调修复记录（2026-10-15）
@@ -440,8 +425,7 @@ node scripts/test_wxml_balance.cjs  # WXML 标签闭合
 
 ### 12.1 全站按钮交互审计
 - 新增 `scripts/test_wxml_handlers.cjs`：全量提取 24 个 WXML 的 bind/catch/mut-bind/capture-* 事件绑定，逐一校验同名 JS 方法存在；同时校验所有 `usingComponents` 的 js/json/wxml 三件套路径。结果：全部解析，无悬空处理器。
-- 修复 3 处 `catch:tap=""`（chat 会话抽屉、honor/mentor 弹层）：空字符串处理器在部分基础库版本不拦截冒泡，改为规范的 `catch:tap="noop"` + 页面内 `noop()` 空方法，保证「点遮罩关闭、点内容不关闭」在所有版本可靠生效。
-- LLM 对话被服务端拒绝（401/402/403/429 或域名未配）时的容错已确认：友好文案注入气泡、streaming 状态复位、可继续发送下一条，不会卡死——拒绝属预期行为，客户端表现正常。
+- 修复 honor/mentor 弹层的 `catch:tap=""`（空字符串处理器在部分基础库版本不拦截冒泡，改为规范的 `catch:tap="noop"` + 页面内 `noop()` 空方法，保证「点遮罩关闭、点内容不关闭」在所有版本可靠生效）。
 
 ### 12.2 与 web 侧数据同步
 - weekly 与赛事列表均为 `api.eesast.com` Hasura GraphQL 实时查询（`weekly` / `contest` 表直查，与 web 端同一查询面），无任何本地快照，天然与 web 同库同步。

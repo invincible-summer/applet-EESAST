@@ -12,6 +12,7 @@ Page({
     view: "login",
     loginForm: { user: "", password: "" },
     logging: false,
+    showPwd: false,
 
     user: null,
     roleText: "",
@@ -32,9 +33,7 @@ Page({
     // 注销
     deleteForm: { code: "" },
     deleteCodeSent: false,
-    deleteCountdown: 0,
-
-    llmToken: ""
+    deleteCountdown: 0
   },
 
   onLoad() {
@@ -59,42 +58,20 @@ Page({
     }
     this.setData({
       user,
-      roleText: config.ROLE_NAMES[user.role] || user.role,
-      llmToken: user.isLoggedIn ? this.b64(user.uuid) : ""
+      roleText: config.ROLE_NAMES[user.role] || user.role
     });
     if (this.data.view === "login") this.setData({ view: "profile" });
     this.loadProfile();
-  },
-
-  b64(str) {
-    // 小程序无 btoa：手写 UTF-8 → base64
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    let out = "";
-    let i = 0;
-    const bytes = [];
-    for (let j = 0; j < str.length; j++) {
-      let c = str.charCodeAt(j);
-      if (c < 0x80) bytes.push(c);
-      else if (c < 0x800) bytes.push(0xc0 | (c >> 6), 0x80 | (c & 0x3f));
-      else bytes.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 0x3f), 0x80 | (c & 0x3f));
-    }
-    while (i < bytes.length) {
-      const b1 = bytes[i];
-      const b2 = bytes[i + 1];
-      const b3 = bytes[i + 2];
-      out += chars[b1 >> 2];
-      out += chars[((b1 & 3) << 4) | ((b2 || 0) >> 4)];
-      out += b2 !== undefined ? chars[((b2 & 15) << 2) | ((b3 || 0) >> 6)] : "=";
-      out += b3 !== undefined ? chars[b3 & 63] : "=";
-      i += 3;
-    }
-    return out;
   },
 
   /* ---------- 登录 ---------- */
   onLoginInput(e) {
     const field = e.currentTarget.dataset.field;
     this.setData({ [`loginForm.${field}`]: e.detail.value });
+  },
+
+  togglePwd() {
+    this.setData({ showPwd: !this.data.showPwd });
   },
 
   doLogin() {
@@ -349,13 +326,6 @@ Page({
           this.setData({ view: "login", profile: null, avatarUrl: "" });
         });
       }
-    });
-  },
-
-  copyLlmToken() {
-    wx.setClipboardData({
-      data: this.data.llmToken,
-      success: () => wx.showToast({ title: "已复制", icon: "none" })
     });
   },
 

@@ -25,10 +25,6 @@
       <view class="quick-icon qi-course">课</view>
       <text class="quick-label">课程评测</text>
     </view>
-    <view class="quick-item" bind:tap="goLLM">
-      <view class="quick-icon qi-llm">AI</view>
-      <text class="quick-label">大模型对话</text>
-    </view>
   </view>
 
   <!-- 部门 -->

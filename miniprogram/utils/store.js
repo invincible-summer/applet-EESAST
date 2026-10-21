@@ -50,7 +50,7 @@ function setProfileCache(profile) {
   }
 }
 
-/** 退出/注销时清空全部本地数据（含 LLM 会话） */
+/** 退出/注销时清空全部本地数据 */
 function clearAll() {
   try {
     wx.clearStorageSync();

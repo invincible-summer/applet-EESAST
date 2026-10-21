@@ -12,12 +12,14 @@
     <view wx:if="{{filteredContests.length === 0}}">
       <empty text="暂无赛事" />
     </view>
-    <view wx:for="{{filteredContests}}" wx:key="id" class="card contest-card" bind:tap="goDetail" data-id="{{item.id}}">
-      <text class="contest-name">{{item.name}}</text>
-      <text class="contest-desc ellipsis-2">{{item.description}}</text>
-      <view class="row contest-meta">
-        <text class="text-3">{{item.start}} ~ {{item.end}}</text>
-        <text class="tag {{item.statusTag}}">{{item.statusText}}</text>
+    <view class="contest-list">
+      <view wx:for="{{filteredContests}}" wx:key="id" class="card contest-card" bind:tap="goDetail" data-id="{{item.id}}">
+        <text class="contest-name">{{item.name}}</text>
+        <text class="contest-desc ellipsis-2">{{item.description}}</text>
+        <view class="row contest-meta">
+          <text class="text-3">{{item.start}} ~ {{item.end}}</text>
+          <text class="tag {{item.statusTag}}">{{item.statusText}}</text>
+        </view>
       </view>
     </view>
   </block>

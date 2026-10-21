@@ -1,5 +1,5 @@
 /**
- * 信息化/用户/课程/LLM GraphQL（与 web/src/graphql 对齐）
+ * 信息化/用户/课程 GraphQL（与 web/src/graphql 对齐）
  */
 const { gql } = require("../utils/graphql");
 
@@ -152,14 +152,6 @@ const Q = {
       url
       date
     }
-  }`,
-
-  getLLMList: `query GetLLMList {
-    llm_list {
-      name
-      value
-      deepthinkingmodel
-    }
   }`
 };
 
@@ -177,6 +169,5 @@ module.exports = {
   getCourseRating: (course_uuid) => gql(Q.getCourseRating, { course_uuid }),
   getCourseRatingOne: (course_uuid, user_uuid) =>
     gql(Q.getCourseRatingOne, { course_uuid, user_uuid }, { silent: true }),
-  getWeekly: () => gql(Q.getWeekly),
-  getLLMList: () => gql(Q.getLLMList, {}, { silent: true })
+  getWeekly: () => gql(Q.getWeekly)
 };

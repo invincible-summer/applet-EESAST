@@ -1,4 +1,4 @@
-<view class="page chat-page readable">
+<view class="page chat-page readable {{view === 'chat' ? 'chat-fixed' : ''}}">
   <empty wx:if="{{loading}}" loading loading-text="加载中…" />
 
   <view wx:elif="{{access === 'forbidden'}}" class="card gate">
@@ -36,7 +36,8 @@
     </scroll-view>
     <view class="chat-input-bar">
       <input class="input flex-1" value="{{input}}" bind:input="onInput" confirm-type="send"
-        bind:confirm="send" placeholder="输入消息…" placeholder-class="ph" />
+        bind:confirm="send" placeholder="输入消息…" placeholder-class="ph"
+        adjust-position cursor-spacing="24" />
       <view class="btn btn-sm btn-primary {{sending ? 'btn-disabled' : ''}}" bind:tap="send">发送</view>
     </view>
   </block>

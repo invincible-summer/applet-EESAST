@@ -3,7 +3,6 @@
  * - SHA-1 / HMAC-SHA1：RFC 3174 / RFC 2202 向量
  * - JWT：正常 / 过期 / 匿名 / 畸形 / 中文 payload
  * - Markdown：块级解析 + HTML 转义 + 行内语法
- * - SSE：增量 UTF-8 解码（逐字节切分多字节字符）
  * - 赛事状态：未开始 / 进行中 / 已结束
  *
  * 用法：node scripts/test_utils.cjs
@@ -14,7 +13,6 @@ const U = path.join(__dirname, "..", "miniprogram", "utils");
 const { sha1Hex, hmacSha1Hex } = require(path.join(U, "sha1.js"));
 const { decodeJwt, parseUser, ANONYMOUS_UUID } = require(path.join(U, "jwt.js"));
 const { parseMarkdown, inlineToHtml } = require(path.join(U, "markdown.js"));
-const { createUtf8Decoder, createSseParser } = require(path.join(U, "sse.js"));
 const { parseNoticeFiles } = require(path.join(U, "notice-files.js"));
 global.wx = global.wx || { getStorageSync: () => "", setStorageSync: () => {}, removeStorageSync: () => {} };
 const { parseListBucketXml } = require(path.join(U, "cos.js"));
@@ -117,19 +115,6 @@ const img = parseMarkdown("![图](https://static.eesast.com/a.png)");
 check("Markdown 图片", img[0].type, "img");
 check("Markdown 图片地址", img[0].src, "https://static.eesast.com/a.png");
 
-/* ---------- SSE 增量 UTF-8 ---------- */
-const text = "你好，世界 🌍 EESAST";
-const bytes = Buffer.from(text, "utf8");
-const decoder = createUtf8Decoder();
-let out = "";
-for (let i = 0; i < bytes.length; i++) out += decoder.push(new Uint8Array([bytes[i]]));
-out += decoder.flush();
-check("SSE 逐字节切分多字节字符", out, text);
-
-const decoder2 = createUtf8Decoder();
-const mid = Math.floor(bytes.length / 2);
-check("SSE 两段切分", decoder2.push(new Uint8Array(bytes.slice(0, mid))) + decoder2.push(new Uint8Array(bytes.slice(mid))) + decoder2.flush(), text);
-
 /* ---------- 赛事状态 ---------- */
 check("赛事：已结束", contestStatus("2020-01-01T00:00:00Z", "2020-12-31T00:00:00Z"), "finished");
 check("赛事：未开始", contestStatus("2099-01-01T00:00:00Z", "2099-12-31T00:00:00Z"), "not_started");
@@ -175,18 +160,5 @@ check("COS XML IsTruncated", bucket.truncated, true);
 check("COS XML NextMarker", bucket.nextMarker, "avatar/abc/b.png");
 check("COS XML 空响应", parseListBucketXml("").contents.length, 0);
 
-/* ---------- SSE 事件切分（CRLF / 跨 chunk） ---------- */
-function collectSse(chunks, flush) {
-  const events = [];
-  const parser = createSseParser((e) => events.push(e));
-  chunks.forEach((c) => parser.push(c));
-  if (flush !== false) parser.flush();
-  return events;
-}
-check("SSE LF 切分", collectSse(["data: a\n\ndata: b\n\n"]), ["data: a", "data: b"]);
-check("SSE CRLF 切分", collectSse(["data: a\r\n\r\ndata: b\r\n\r\n"]), ["data: a", "data: b"]);
-check("SSE CRLF 跨 chunk", collectSse(["data: a\r", "\n\r\ndata: b\r\n\r\n"]), ["data: a", "data: b"]);
-check("SSE 末尾无空行", collectSse(["data: last"]), ["data: last"]);
-check("SSE 不完整事件", collectSse(["data: partial"], false), []);
 console.log(`\n通过 ${pass} 项，失败 ${fail} 项`);
 process.exit(fail ? 1 : 0);

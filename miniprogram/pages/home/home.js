@@ -28,15 +28,6 @@ Page({
   goCourse() {
     wx.navigateTo({ url: "/packages/share/pages/course/course" });
   },
-  goLLM() {
-    const auth = require("../../utils/auth");
-    if (!auth.isLoggedIn()) {
-      wx.showToast({ title: "请先登录后使用 AI 对话", icon: "none" });
-      wx.switchTab({ url: "/pages/user/user" });
-      return;
-    }
-    wx.navigateTo({ url: "/packages/chat/pages/chat/chat" });
-  },
   copyLink(e) {
     const url = e.currentTarget.dataset.url;
     wx.setClipboardData({

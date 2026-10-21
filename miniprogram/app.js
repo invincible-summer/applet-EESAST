@@ -3,8 +3,7 @@ const store = require("./utils/store");
 
 App({
   globalData: {
-    userInfo: null,
-    statusBarHeight: 20
+    userInfo: null
   },
 
   onLaunch() {
@@ -18,13 +17,6 @@ App({
       .catch(() => {
         // 离线/服务不可用：保持游客态，页面请求时重试
       });
-
-    try {
-      const sys = wx.getSystemInfoSync();
-      this.globalData.statusBarHeight = sys.statusBarHeight || 20;
-    } catch (e) {
-      /* ignore */
-    }
   },
 
   onShow() {
