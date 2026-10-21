@@ -118,19 +118,32 @@ Page({
     const prefix = `${this.contestName}/arena/`;
     // 回放对象是「每个房间一个目录」：{赛事名}/arena/{room_id}/playback.thuaipb
     // （与 web RecordPage 的 downloadFile 路径一致）
-    wx.showLoading({ title: "获取回放…" });
+    const key = `${this.contestName}/arena/${roomId}/playback.thuaipb`;
+    wx.showLoading({ title: "检查回放…" });
+    // 并非每个已结束对局都有回放文件：先 HEAD 探测，避免复制出 NoSuchKey 死链
     cos
-      .getSignedUrl(prefix, `${this.contestName}/arena/${roomId}/playback.thuaipb`)
+      .headObject(prefix, key)
+      .then((exists) => {
+        if (!exists) return null;
+        return cos.getSignedUrl(prefix, key);
+      })
       .then((url) => {
         wx.hideLoading();
+        if (!url) {
+          wx.showToast({ title: "该对局暂无回放文件", icon: "none" });
+          return;
+        }
         wx.setClipboardData({
           data: url,
           success: () => wx.showToast({ title: "回放下载链接已复制", icon: "none" })
         });
       })
-      .catch(() => {
+      .catch((err) => {
         wx.hideLoading();
-        wx.showToast({ title: "回放不存在或无法获取", icon: "none" });
+        wx.showToast({
+          title: err && err.statusCode === 403 ? "无权限获取回放" : "回放不存在或无法获取",
+          icon: "none"
+        });
       });
   }
 });
