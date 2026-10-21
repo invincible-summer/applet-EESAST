@@ -221,7 +221,10 @@ page {
   background: var(--card-2);
   border: 1rpx solid var(--border);
   border-radius: 14rpx;
-  padding: 20rpx 24rpx;
+  /* 不要用垂直 padding：微信原生 input 的行高与内容区叠加会导致上下裁字 */
+  height: 88rpx;
+  line-height: 88rpx;
+  padding: 0 24rpx;
   font-size: 28rpx;
   color: var(--text);
   box-sizing: border-box;
@@ -233,6 +236,7 @@ page {
   border-radius: 14rpx;
   padding: 20rpx 24rpx;
   font-size: 28rpx;
+  line-height: 1.6;
   color: var(--text);
   width: 100%;
   min-height: 160rpx;
