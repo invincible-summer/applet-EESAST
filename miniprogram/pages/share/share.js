@@ -19,7 +19,8 @@ Page({
   onTap(e) {
     const key = e.currentTarget.dataset.key;
     const auth = require("../../utils/auth");
-    const needLogin = e.currentTarget.dataset.login;
+    // dataset 里布尔值在部分基础库/写法下会变成字符串，统一按字符串判断
+    const needLogin = String(e.currentTarget.dataset.login) === "true";
     if (needLogin && !auth.isLoggedIn()) {
       wx.showToast({ title: "请先登录", icon: "none" });
       return;

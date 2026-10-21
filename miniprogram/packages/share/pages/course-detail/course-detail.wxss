@@ -35,6 +35,11 @@
   display: flex;
   flex-direction: column;
 }
+.comment-child {
+  margin-left: 44rpx;
+  border-left: 4rpx solid var(--brand);
+  background: var(--brand-light);
+}
 .comment-avatar {
   width: 68rpx;
   height: 68rpx;
@@ -46,6 +51,11 @@
   justify-content: center;
   font-size: 28rpx;
   font-weight: 600;
+}
+.comment-avatar-sm {
+  width: 52rpx;
+  height: 52rpx;
+  font-size: 24rpx;
 }
 .comment-text {
   display: block;

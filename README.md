@@ -68,6 +68,8 @@ applet/
 
 - 全部 JS `node --check` 通过；全部 JSON 可解析；41 个 JS 模块在 stub 环境加载成功
 - 24 个 WXML 标签闭合平衡；全部事件处理器与 JS 方法对应；组件引用路径有效
+- **WXML ↔ JS 绑定一致性**：24 个 WXML 的 `{{}}` 字段与 `<template>` 调用均可追溯到 JS 数据源，0 问题：`node scripts/test_bindings.cjs`
+- **接口实测**（对 `api.eesast.com` 线上）：匿名角色可读的全部 GraphQL 查询逐条验证通过，含 9 个赛事的 `contest_time` 时间线与 `getTeams`/`getArenaRooms`/`getRLScores` 等；REST 端点与 `api/src/routes` 的 method/请求体/响应对应关系逐条核对
 - SHA-1 / HMAC-SHA1 通过 RFC 3174/2202 测试向量；JWT 解码（含中文/过期/匿名）通过
 - COS 签名与官方 SDK 三组样例（put/get/head + 中文路径）完全一致：`node scripts/test_cos_signature.cjs`
 
