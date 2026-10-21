@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-checks:
+    name: 静态校验
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: JS 语法（node --check）
+        run: |
+          fail=0
+          while IFS= read -r -d '' f; do
+            node --check "$f" || fail=1
+          done < <(find miniprogram scripts \( -name '*.js' -o -name '*.cjs' \) -print0)
+          exit $fail
+
+      - name: JSON 可解析
+        run: |
+          node -e "
+          const fs = require('fs'), path = require('path');
+          const walk = (d, out = []) => {
+            for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+              const f = path.join(d, e.name);
+              e.isDirectory() ? walk(f, out) : out.push(f);
+            }
+            return out;
+          };
+          const files = walk('miniprogram').filter((f) => f.endsWith('.json'));
+          let bad = 0;
+          for (const f of files) {
+            try { JSON.parse(fs.readFileSync(f, 'utf8')); }
+            catch (e) { bad++; console.error('✗ ' + f + ' — ' + e.message); }
+          }
+          console.log(bad ? bad + ' 个 JSON 解析失败' : 'JSON OK (' + files.length + ' 个文件)');
+          process.exit(bad ? 1 : 0);
+          "
+
+      - name: 工程结构（页面/导航/事件/组件）
+        run: node scripts/test_structure.cjs
+
+      - name: WXML 标签闭合
+        run: node scripts/test_wxml_balance.cjs
+
+      - name: WXML ↔ JS 绑定一致性
+        run: |
+          if [ -f scripts/test_bindings.cjs ]; then
+            node scripts/test_bindings.cjs
+          else
+            echo "::notice::scripts/test_bindings.cjs 尚未合入当前分支，跳过"
+          fi
+
+      - name: 工具模块单测（SHA1/JWT/Markdown/SSE）
+        run: node scripts/test_utils.cjs
+
+  cos-signature:
+    name: COS 签名交叉校验
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: 安装官方 SDK（仅用于比对，不进入小程序包）
+        run: npm install --prefix "$RUNNER_TEMP/cos-sdk" --no-package-lock --silent cos-js-sdk-v5
+
+      - name: 逐字节比对签名
+        env:
+          COS_SDK_DIR: ${{ runner.temp }}/cos-sdk/node_modules/cos-js-sdk-v5
+        run: node scripts/test_cos_signature.cjs --require-sdk

@@ -245,5 +245,7 @@ module.exports = {
   headObject,
   listObjects,
   downloadAndOpen,
-  cosBaseUrl
+  cosBaseUrl,
+  // 导出供 scripts/test_cos_signature.cjs 做官方 SDK 交叉校验（小程序内不使用）
+  buildSignature
 };
