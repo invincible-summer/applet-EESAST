@@ -116,9 +116,11 @@ Page({
   downloadPlayback(e) {
     const roomId = e.currentTarget.dataset.room;
     const prefix = `${this.contestName}/arena/`;
+    // 回放对象是「每个房间一个目录」：{赛事名}/arena/{room_id}/playback.thuaipb
+    // （与 web RecordPage 的 downloadFile 路径一致）
     wx.showLoading({ title: "获取回放…" });
     cos
-      .getSignedUrl(prefix, `${this.contestName}/arena/${roomId}.thuaipb`)
+      .getSignedUrl(prefix, `${this.contestName}/arena/${roomId}/playback.thuaipb`)
       .then((url) => {
         wx.hideLoading();
         wx.setClipboardData({
