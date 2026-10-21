@@ -37,12 +37,13 @@ const Q = {
 
   getContestTimes: `query GetContestTimes($contest_id: uuid!) {
     contest_time(
+      order_by: { start: asc }
       where: { contest_id: { _eq: $contest_id } }
-      order_by: { time: asc }
     ) {
-      id
       event
-      time
+      start
+      end
+      description
     }
   }`,
 

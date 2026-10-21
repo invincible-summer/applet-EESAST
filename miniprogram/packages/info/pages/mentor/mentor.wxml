@@ -79,7 +79,9 @@
 
     <!-- 谈话记录 -->
     <block wx:if="{{tab === 'talk'}}">
-      <view class="card">
+      <empty wx:if="{{!isFreshman && !isMember}}" text="当前身份无需提交谈话记录" />
+
+      <view wx:if="{{isFreshman}}" class="card">
         <view class="row-between" style="margin-bottom: 12rpx;">
           <text class="h3">导师谈话记录</text>
           <view class="btn btn-sm btn-primary" bind:tap="uploadRecord" data-kind="talk">上传记录</view>
@@ -95,7 +97,7 @@
         </view>
       </view>
 
-      <view class="card">
+      <view wx:if="{{isMember}}" class="card">
         <view class="row-between" style="margin-bottom: 12rpx;">
           <text class="h3">积极分子谈话记录</text>
           <view class="btn btn-sm btn-primary" bind:tap="uploadRecord" data-kind="member">上传记录</view>

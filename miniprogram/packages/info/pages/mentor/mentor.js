@@ -21,6 +21,7 @@ Page({
     applications: [],
     mentors: [],
     isFreshman: false,
+    isMember: false,
     // 申请弹层
     applying: false,
     applyMentor: null,
@@ -35,7 +36,9 @@ Page({
 
   onLoad() {
     const user = auth.getUser();
-    if (!auth.isTsinghua()) {
+    // 本页只实现学生视图：所用接口中 my_talk_records / my_member_chats
+    // 在后端为 authenticate(["student"])，teacher / counselor 调用会 401
+    if (!auth.isTsinghua() || user.role !== "student") {
       this.setData({ access: "forbidden", loading: false });
       return;
     }
@@ -92,6 +95,8 @@ Page({
           schedule: scheduleList,
           applications: apps,
           mentors: mentorList,
+          isFreshman: !!(talk && talk.in_freshman),
+          isMember: !!(memberChat && memberChat.is_member),
           talk: {
             currentSemester: (talk && talk.current_semester) || null,
             records: ((talk && talk.records) || []).map((r) => ({
@@ -240,20 +245,33 @@ Page({
 
   downloadRecord(e) {
     const { kind, semester, id } = e.currentTarget.dataset;
-    const prefix = `chat_record/${this.userUuid}/${kind}/${semester || ""}/`;
+    // 新系统：chat_record/{uuid}/{talk|member}/{semester}/；旧系统记录（semester 为空）
+    // 的文件在 chat_record/{申请id}/[member/]（此时记录 id 即 mentor_application.id）
+    const primaryPrefix = semester ? `chat_record/${this.userUuid}/${kind}/${semester}/` : "";
+    const legacyPrefix = `chat_record/${id}/${kind === "member" ? "member/" : ""}`;
+    const latestOf = (prefix) =>
+      cos.listObjects(prefix, prefix).then((files) => {
+        if (!files || !files.length) return null;
+        return files.reduce((max, f) =>
+          new Date(f.LastModified) > new Date(max.LastModified) ? f : max
+        );
+      });
     wx.showLoading({ title: "查找文件…" });
-    cos
-      .listObjects(prefix, prefix)
-      .then((files) => {
+    (primaryPrefix ? latestOf(primaryPrefix) : Promise.resolve(null))
+      .then((hit) => {
+        if (hit) return { prefix: primaryPrefix, key: hit.Key };
+        // 回退到旧系统路径（无学期信息时也走这里）
+        return latestOf(legacyPrefix).then((old) => (old ? { prefix: legacyPrefix, key: old.Key } : null));
+      })
+      .then((target) => {
         wx.hideLoading();
-        if (!files || !files.length) {
+        if (!target) {
           wx.showToast({ title: "暂无文件", icon: "none" });
           return;
         }
-        const latest = files.reduce((max, f) =>
-          new Date(f.LastModified) > new Date(max.LastModified) ? f : max
-        );
-        return cos.downloadAndOpen(prefix, latest.Key);
+        return cos
+          .downloadAndOpen(target.prefix, target.key)
+          .catch(() => wx.showToast({ title: "下载失败", icon: "none" }));
       })
       .catch(() => {
         wx.hideLoading();
