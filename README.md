@@ -73,6 +73,8 @@ applet/
 - SHA-1 / HMAC-SHA1 通过 RFC 3174/2202 测试向量；JWT 解码（含中文/过期/匿名）通过
 - COS 签名与官方 SDK 三组样例（put/get/head + 中文路径）完全一致：`node scripts/test_cos_signature.cjs`
 
+以上校验已固化为脚本，并由 `.github/workflows/ci.yml` 在每次 push / PR 自动执行：`test_structure.cjs`（页面/导航/事件/组件）、`test_wxml_balance.cjs`、`test_bindings.cjs`（WXML↔JS 绑定）、`test_utils.cjs`（SHA1/JWT/Markdown/SSE）、`test_cos_signature.cjs`（无 SDK 时校验内置基准向量，CI 中安装官方 SDK 逐字节比对）。真机验收清单见 [docs/TESTING.md](./docs/TESTING.md)。
+
 ## 约束说明
 
 - 原系统 CORS/域名未变：小程序请求不受浏览器 CORS 限制，但真机必须在后台配置域名白名单（见上）
