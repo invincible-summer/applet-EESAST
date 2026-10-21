@@ -5,7 +5,8 @@ on:
   pull_request:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # push 与 pull_request 复用同一组，避免同一 PR 重复跑两份
+  group: ci-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
