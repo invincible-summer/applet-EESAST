@@ -1,6 +1,7 @@
 const contestService = require("../../../../services/contest");
 const cos = require("../../../../utils/cos");
 const fmt = require("../../../../utils/format");
+const { parseNoticeFiles } = require("../../../../utils/notice-files");
 
 Page({
   data: {
@@ -26,17 +27,8 @@ Page({
       .then((data) => {
         const notice = ((data && data.contest_notice) || []).find((n) => n.id === this.id);
         if (!notice) throw new Error("公告不存在");
-        let files = [];
-        if (notice.files) {
-          try {
-            files = JSON.parse(notice.files).map((f) => ({
-              name: f.split("/").pop(),
-              key: f
-            }));
-          } catch (e) {
-            files = [];
-          }
-        }
+        // 赛事公告的 files 形如 [{ filename }]，key 需拼上 {赛事名}/notice/
+        const files = parseNoticeFiles(notice.files, `${this.contestName}/notice/`);
         this.setData({
           loading: false,
           notice: {
@@ -55,7 +47,15 @@ Page({
   },
 
   downloadFile(e) {
-    const key = e.currentTarget.dataset.key;
+    const { key, url } = e.currentTarget.dataset;
+    if (url) {
+      wx.setClipboardData({
+        data: url,
+        success: () => wx.showToast({ title: "下载链接已复制", icon: "none" })
+      });
+      return;
+    }
+    if (!key) return;
     const prefix = `${this.contestName}/notice/`;
     wx.showLoading({ title: "下载附件…" });
     cos

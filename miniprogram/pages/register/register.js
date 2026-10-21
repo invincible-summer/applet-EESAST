@@ -50,8 +50,9 @@ Page({
       wx.showToast({ title: "学生注册请使用 @mails.tsinghua.edu.cn 邮箱", icon: "none" });
       return;
     }
-    if (this.data.role === "teacher" && !/@(mails\.)?tsinghua\.edu\.cn$/.test(email)) {
-      wx.showToast({ title: "教师注册请使用清华邮箱", icon: "none" });
+    // 后端 __ValidateTeacherEmail 只接受 @tsinghua.edu.cn（不含 mails 子域）
+    if (this.data.role === "teacher" && !/@tsinghua\.edu\.cn$/.test(email)) {
+      wx.showToast({ title: "教师注册请使用 @tsinghua.edu.cn 邮箱", icon: "none" });
       return;
     }
     if (this.data.role === "guest" && !/^[\w.-]+@[\w.-]+\.\w+$/.test(email)) {

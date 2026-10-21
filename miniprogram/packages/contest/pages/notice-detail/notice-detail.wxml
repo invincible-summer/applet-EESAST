@@ -8,7 +8,7 @@
     </view>
     <view wx:if="{{files.length > 0}}" class="card">
       <text class="h3" style="margin-bottom: 12rpx;">附件</text>
-      <view wx:for="{{files}}" wx:key="key" class="file-item" bind:tap="downloadFile" data-key="{{item.key}}">
+      <view wx:for="{{files}}" wx:key="key" class="file-item" bind:tap="downloadFile" data-key="{{item.key}}" data-url="{{item.url}}">
         <text class="file-icon">📎</text>
         <text class="file-name ellipsis flex-1">{{item.name}}</text>
         <text class="brand-text">下载</text>

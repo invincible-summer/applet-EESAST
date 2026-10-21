@@ -234,9 +234,13 @@ Page({
 
     let content = "";
     let reasoning = "";
+    // 只回传 role/content：本地消息还带 reasoning 字段，透传给模型网关可能被拒
+    const history = messages
+      .slice(0, -1)
+      .map((m) => ({ role: m.role, content: m.content }));
     this.task = sseRequest({
       url: `${config.API_BASE}/llm/chat`,
-      data: { messages: messages.slice(0, -1), model: modelToUse },
+      data: { messages: history, model: modelToUse },
       token: this.llmToken,
       onData: (parsed) => {
         if (parsed && typeof parsed === "object") {

@@ -172,12 +172,71 @@ function headObject(prefix, key) {
   );
 }
 
-/** 列举对象（GET Bucket /?prefix=） */
-function listObjects(prefix, listPrefix) {
-  const params = { "max-keys": "100", prefix: listPrefix };
-  return getSTS(prefix).then(
-    (sts) =>
+/** XML 实体还原（COS 的 Key 会把 & < > 等转义） */
+function xmlUnescape(s) {
+  return String(s)
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, "&");
+}
+
+function xmlTag(block, name) {
+  const m = block.match(new RegExp("<" + name + ">([\\s\\S]*?)</" + name + ">"));
+  return m ? xmlUnescape(m[1].trim()) : "";
+}
+
+/**
+ * 解析 GET Bucket 的 XML 响应。
+ * COS 的 XML API 返回 XML（不是 JSON）；旧实现直接读 res.data.Contents，
+ * 导致列举结果恒为空（头像、谈话记录下载全部失效）。
+ */
+function parseListBucketXml(xml) {
+  const text = typeof xml === "string" ? xml : "";
+  const contents = [];
+  const re = /<Contents>([\s\S]*?)<\/Contents>/g;
+  let m;
+  while ((m = re.exec(text))) {
+    const key = xmlTag(m[1], "Key");
+    if (!key) continue;
+    contents.push({
+      Key: key,
+      LastModified: xmlTag(m[1], "LastModified")
+    });
+  }
+  return {
+    contents,
+    truncated: /<IsTruncated>\s*true\s*<\/IsTruncated>/i.test(text),
+    nextMarker: xmlTag(text, "NextMarker")
+  };
+}
+
+/** 兼容网关若返回 JSON 的情况 */
+function parseListObjectsResponse(data) {
+  if (data && typeof data === "object" && Array.isArray(data.Contents)) {
+    return {
+      contents: data.Contents,
+      truncated: !!data.IsTruncated,
+      nextMarker: data.NextMarker || ""
+    };
+  }
+  return parseListBucketXml(data);
+}
+
+/**
+ * 列举对象（GET Bucket /?prefix=）
+ * 自动翻页（COS 单页最多 1000 个，返回 IsTruncated/NextMarker），默认最多 10 页。
+ */
+function listObjects(prefix, listPrefix, options) {
+  const maxPages = (options && options.maxPages) || 10;
+  return getSTS(prefix).then((sts) => {
+    const all = [];
+
+    const fetchPage = (marker, page) =>
       new Promise((resolve, reject) => {
+        const params = { "max-keys": "1000", prefix: listPrefix };
+        if (marker) params.marker = marker;
         const auth = buildSignature({ method: "GET", key: "", sts, params });
         const qs = sortParams(params);
         wx.request({
@@ -188,18 +247,25 @@ function listObjects(prefix, listPrefix) {
             "x-cos-security-token": sts.sessionToken
           },
           success(res) {
-            if (res.statusCode === 200 && res.data && res.data.Contents) {
-              resolve(res.data.Contents);
-            } else if (res.statusCode === 200) {
-              resolve([]);
-            } else {
+            if (res.statusCode !== 200) {
               reject({ statusCode: res.statusCode, message: "列举文件失败" });
+              return;
+            }
+            const parsed = parseListObjectsResponse(res.data);
+            for (const item of parsed.contents) all.push(item);
+            if (parsed.truncated && parsed.nextMarker && page < maxPages) {
+              resolve(fetchPage(parsed.nextMarker, page + 1));
+            } else {
+              resolve(all);
             }
           },
-          fail: (err) => reject({ statusCode: -1, message: err.errMsg || "列举文件失败" })
+          fail: (err) =>
+            reject({ statusCode: -1, message: err.errMsg || "列举文件失败" })
         });
-      })
-  );
+      });
+
+    return fetchPage("", 1);
+  });
 }
 
 /** 下载并用系统能力打开文档（doc/pdf/zip 等走 openDocument，其余提示） */
@@ -246,6 +312,8 @@ module.exports = {
   listObjects,
   downloadAndOpen,
   cosBaseUrl,
-  // 导出供 scripts/test_cos_signature.cjs 做官方 SDK 交叉校验（小程序内不使用）
-  buildSignature
+  // 以下导出仅供 scripts/ 下的单测使用（小程序内不使用）
+  buildSignature,
+  parseListBucketXml,
+  parseListObjectsResponse
 };
