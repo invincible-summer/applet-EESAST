@@ -15,14 +15,6 @@
 
   <!-- 正常内容 -->
   <block wx:else>
-    <view class="page-intro info-intro">
-      <view>
-        <text class="eyebrow">EESAST CAMPUS</text>
-        <text class="h1 page-title">信息化平台</text>
-        <text class="text-2 page-subtitle">公告、导师与成长服务，一站式掌握。</text>
-      </view>
-      <view class="intro-mark">E</view>
-    </view>
     <!-- 功能入口 -->
     <view class="entry-row">
       <view class="entry card" bind:tap="goMentor">

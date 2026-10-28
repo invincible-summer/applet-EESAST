@@ -4,9 +4,8 @@
   <block wx:if="{{view === 'login'}}">
     <view class="login-hero">
       <image class="login-logo" src="/assets/logo.png" mode="aspectFit"></image>
-      <text class="eyebrow login-eyebrow">EESAST COMMUNITY</text>
       <text class="login-title">EESAST</text>
-      <text class="login-sub">清华大学电子工程系学生科协 · 一起成长</text>
+      <text class="login-sub">清华大学电子工程系学生科协</text>
     </view>
 
     <view class="card login-card">

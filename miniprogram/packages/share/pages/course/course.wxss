@@ -23,10 +23,6 @@
 .course-card {
   display: flex;
   flex-direction: column;
-  border-left: 6rpx solid var(--brand);
-}
-.course-card:active {
-  border-color: var(--brand);
 }
 .course-name {
   font-size: 30rpx;

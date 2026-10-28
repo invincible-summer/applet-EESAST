@@ -1,16 +1,4 @@
 <view class="page readable">
-  <view class="home-intro">
-    <view class="home-intro-copy">
-      <text class="eyebrow">EESAST · 电子系学生科协</text>
-      <text class="home-title">连接热爱，创造未来</text>
-      <text class="home-subtitle">赛事、课程与技术社区，都在这里开始。</text>
-    </view>
-    <view class="home-status {{isLoggedIn ? 'status-online' : ''}}">
-      <view class="status-dot"></view>
-      <text>{{isLoggedIn ? '已登录' : '游客访问'}}</text>
-    </view>
-  </view>
-
   <!-- 轮播 -->
   <swiper class="news-swiper" indicator-dots indicator-color="rgba(255,255,255,0.4)"
     indicator-active-color="#ffffff" circular autoplay interval="5000">
@@ -46,8 +34,6 @@
   </view>
   <scroll-view class="division-scroll" scroll-x enable-flex enhanced show-scrollbar="{{false}}">
     <view class="division-card" wx:for="{{divisions}}" wx:key="name">
-      <image class="division-cover" src="{{item.cover}}" mode="aspectFill"></image>
-      <view class="division-overlay"></view>
       <view class="division-body">
         <text class="division-name">{{item.name}}</text>
         <text class="division-desc">{{item.desc}}</text>

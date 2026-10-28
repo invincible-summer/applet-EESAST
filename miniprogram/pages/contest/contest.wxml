@@ -1,12 +1,4 @@
 <view class="page readable">
-  <view class="page-intro">
-    <view>
-      <text class="eyebrow">EESAST EVENTS</text>
-      <text class="h1 page-title">赛事互动</text>
-      <text class="text-2 page-subtitle">发现比赛，和队友一起把想法做出来。</text>
-    </view>
-    <view class="count-badge"><text>{{filteredContests.length}}</text><text>场赛事</text></view>
-  </view>
   <!-- 筛选 -->
   <scroll-view class="filter-bar" scroll-x enhanced show-scrollbar="{{false}}">
     <view class="filter-item {{filter === 'all' ? 'filter-active' : ''}}" bind:tap="setFilter" data-filter="all">全部</view>
