@@ -1,6 +1,13 @@
 .hero-name {
   font-size: 36rpx;
   font-weight: 700;
+  max-width: 70%;
+  line-height: 1.3;
+}
+.hero {
+  padding: 34rpx 30rpx 28rpx;
+  border-top: 6rpx solid var(--brand);
+  background: linear-gradient(145deg, var(--card), var(--brand-light));
 }
 .stat-row {
   display: flex;
@@ -37,6 +44,9 @@
   align-items: center;
   padding: 20rpx 0;
   position: relative;
+}
+.fn-item:active {
+  opacity: 0.65;
 }
 .fn-icon {
   font-size: 44rpx;
@@ -96,4 +106,5 @@
 }
 .tip-card {
   border: 1rpx dashed var(--border);
+  background: var(--card-2);
 }

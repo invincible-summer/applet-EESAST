@@ -1,7 +1,11 @@
 <view class="page readable">
-  <view class="share-head">
-    <text class="h1">资源共享</text>
-    <text class="text-2" style="margin-top: 8rpx;">课程资料 · 技术分享 · 学习生活</text>
+  <view class="share-head page-intro">
+    <view>
+      <text class="eyebrow">EESAST LIBRARY</text>
+      <text class="h1 page-title">资源共享</text>
+      <text class="text-2 page-subtitle">课程资料 · 技术分享 · 学习生活</text>
+    </view>
+    <view class="share-mark">↗</view>
   </view>
 
   <view class="grid">

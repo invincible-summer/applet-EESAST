@@ -3,14 +3,25 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80rpx 40rpx;
+  padding: 96rpx 40rpx;
 }
 .empty-dot {
-  width: 96rpx;
-  height: 96rpx;
-  border-radius: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 28rpx;
   background: var(--brand-light);
   margin-bottom: 24rpx;
+  position: relative;
+}
+.empty-dot::after {
+  content: "";
+  position: absolute;
+  left: 27rpx;
+  top: 27rpx;
+  width: 34rpx;
+  height: 34rpx;
+  border: 4rpx solid var(--brand);
+  border-radius: 50%;
 }
 .empty-spinner {
   width: 64rpx;

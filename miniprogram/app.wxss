@@ -4,22 +4,24 @@
  */
 page {
   /* 浅色主题（默认） */
-  --brand: #4f46e5;
-  --brand-light: #eef2ff;
-  --brand-grad: linear-gradient(135deg, #4f46e5, #7c3aed);
-  --accent: #06b6d4;
-  --bg: #f5f6fa;
+  --brand: #087f8c;
+  --brand-dark: #075b65;
+  --brand-light: #e5f6f7;
+  --brand-grad: linear-gradient(135deg, #075b65 0%, #087f8c 54%, #16b8b2 100%);
+  --accent: #f39b4a;
+  --bg: #f3f8f8;
   --card: #ffffff;
-  --card-2: #f8f9fc;
-  --text: #1f2329;
-  --text-2: #6b7280;
-  --text-3: #9ca3af;
-  --border: #ebedf2;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  --card-2: #f7fbfb;
+  --text: #122b33;
+  --text-2: #557078;
+  --text-3: #8ba0a5;
+  --border: #dcebed;
+  --success: #159b79;
+  --warning: #d98a32;
+  --danger: #d95858;
   --mask: rgba(17, 24, 39, 0.45);
-  --shadow: 0 4rpx 20rpx rgba(31, 35, 41, 0.06);
+  --shadow: 0 12rpx 36rpx rgba(28, 75, 82, 0.08);
+  --shadow-hover: 0 16rpx 40rpx rgba(28, 75, 82, 0.14);
 
   background: var(--bg);
   color: var(--text);
@@ -31,28 +33,42 @@ page {
 
 @media (prefers-color-scheme: dark) {
   page {
-    --brand: #818cf8;
-    --brand-light: rgba(129, 140, 248, 0.14);
-    --brand-grad: linear-gradient(135deg, #6366f1, #8b5cf6);
-    --bg: #0f1115;
-    --card: #1a1d24;
-    --card-2: #15181e;
-    --text: #e5e7eb;
-    --text-2: #9ca3af;
-    --text-3: #6b7280;
-    --border: #2a2e38;
+    --brand: #3cc6c3;
+    --brand-dark: #b1f1ef;
+    --brand-light: rgba(60, 198, 195, 0.14);
+    --brand-grad: linear-gradient(135deg, #0c6670, #087f8c 55%, #18a6a3);
+    --bg: #0d1d22;
+    --card: #12282e;
+    --card-2: #102329;
+    --text: #e6f4f4;
+    --text-2: #a1b9bd;
+    --text-3: #6f8a90;
+    --border: #24434a;
     --shadow: none;
+    --shadow-hover: 0 16rpx 40rpx rgba(0, 0, 0, 0.28);
   }
 }
 
 /* ===== 布局 ===== */
 .page {
   min-height: 100vh;
-  padding: 24rpx;
+  padding: 28rpx 24rpx 40rpx;
   box-sizing: border-box;
 }
 .page-gray {
   background: var(--bg);
+}
+
+page::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  top: -180rpx;
+  right: -160rpx;
+  width: 520rpx;
+  height: 520rpx;
+  border-radius: 50%;
+  background: rgba(22, 184, 178, 0.08);
 }
 
 /* 宽屏（平板/折叠屏展开）阅读容器限宽居中 */
@@ -81,12 +97,17 @@ page {
 
 .card {
   background: var(--card);
-  border-radius: 20rpx;
-  padding: 28rpx;
+  border-radius: 24rpx;
+  padding: 30rpx;
   margin-bottom: 24rpx;
   box-shadow: var(--shadow);
   box-sizing: border-box;
   border: 1rpx solid var(--border);
+}
+
+.card:active {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(1rpx);
 }
 
 .row {
@@ -115,9 +136,26 @@ page {
   justify-content: center;
 }
 
+.page-intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin: 4rpx 4rpx 28rpx;
+}
+.page-title {
+  display: block;
+  margin-top: 6rpx;
+}
+.page-subtitle {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+}
+
 /* ===== 文本 ===== */
 .h1 {
-  font-size: 40rpx;
+  font-size: 42rpx;
   font-weight: 700;
   color: var(--text);
 }
@@ -145,6 +183,12 @@ page {
 }
 .brand-text {
   color: var(--brand);
+}
+.eyebrow {
+  color: var(--brand);
+  font-size: 21rpx;
+  letter-spacing: 3rpx;
+  font-weight: 700;
 }
 .bold {
   font-weight: 600;

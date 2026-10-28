@@ -1,12 +1,26 @@
 .share-head {
-  margin: 8rpx 4rpx 28rpx;
+  margin-bottom: 28rpx;
+}
+.share-mark {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 28rpx;
+  color: #ffffff;
+  background: linear-gradient(135deg, #c66a36, #eab049);
+  font-size: 48rpx;
+  font-weight: 700;
+  box-shadow: 0 10rpx 22rpx rgba(198, 106, 54, 0.2);
 }
 .entry-card {
   display: flex;
   align-items: center;
   gap: 22rpx;
+}
+.entry-card:active {
+  border-color: var(--brand);
 }
 .entry-icon {
   font-size: 48rpx;

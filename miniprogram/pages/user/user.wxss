@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 72rpx 0 48rpx;
+  padding: 54rpx 0 36rpx;
 }
 .login-logo {
   width: 140rpx;
@@ -16,6 +16,9 @@
   font-weight: 700;
   letter-spacing: 2rpx;
   color: var(--text);
+}
+.login-eyebrow {
+  margin-bottom: 4rpx;
 }
 .login-sub {
   margin-top: 8rpx;
@@ -81,6 +84,7 @@
   display: flex;
   align-items: center;
   gap: 24rpx;
+  border-top: 6rpx solid var(--brand);
 }
 .avatar-wrap {
   position: relative;
@@ -139,6 +143,7 @@
   display: flex;
   align-items: center;
   border: 1rpx solid var(--brand);
+  background: linear-gradient(135deg, var(--brand-light), var(--card));
 }
 .entry-arrow {
   font-size: 40rpx;
