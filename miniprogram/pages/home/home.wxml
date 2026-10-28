@@ -30,7 +30,6 @@
   <!-- 部门 -->
   <view class="section-head">
     <text class="h2">科协部门</text>
-    <text class="text-3">EESAST DIVISIONS</text>
   </view>
   <scroll-view class="division-scroll" scroll-x enable-flex enhanced show-scrollbar="{{false}}">
     <view class="division-card" wx:for="{{divisions}}" wx:key="name">
@@ -46,7 +45,6 @@
   <!-- 赛事展示墙 -->
   <view class="section-head">
     <text class="h2">赛事展示</text>
-    <text class="text-3">CONTESTS</text>
   </view>
   <view class="wall">
     <view class="card wall-card" wx:for="{{displayWall}}" wx:key="id">

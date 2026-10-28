@@ -2,14 +2,14 @@
   <!-- 未登录 -->
   <view wx:if="{{access === 'need_login'}}" class="card gate">
     <text class="gate-title">信息化平台</text>
-    <text class="text-2 gate-desc">信息化平台是院系共建的学生操作平台，包含门户公告、新生导师、奖学金申请等功能。请先登录并完成清华邮箱认证。</text>
+    <text class="text-2 gate-desc">请先登录，并完成清华邮箱认证。</text>
     <view class="btn btn-primary gate-btn" bind:tap="goLogin">去登录</view>
   </view>
 
   <!-- 无权限（未清华认证） -->
   <view wx:elif="{{access === 'forbidden'}}" class="card gate">
     <text class="gate-title">需要清华身份</text>
-    <text class="text-2 gate-desc">检测到当前账号尚未完成清华邮箱认证。请在「我的 → 清华邮箱认证」中完成认证后访问信息化平台。</text>
+    <text class="text-2 gate-desc">请先完成清华邮箱认证。</text>
     <view class="btn btn-primary gate-btn" bind:tap="goLogin">去认证</view>
   </view>
 
