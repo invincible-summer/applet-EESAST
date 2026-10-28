@@ -26,31 +26,31 @@ const divisions = [
   {
     name: "软件部",
     desc: "负责各类软件项目与工具的开发维护，是科协的代码中坚力量。",
-    cover: `${STATIC}/public/images/2024/software.jpg`,
+    cover: `${STATIC}/public/images/division-introduction-software-group-photo-2024.png`,
     tab: 0
   },
   {
     name: "硬件部",
     desc: "聚焦电子设计与嵌入式系统，承办硬件设计大赛。",
-    cover: `${STATIC}/public/images/2024/hardware.jpg`,
+    cover: `${STATIC}/public/images/division-introduction-hardware-group-photo.png`,
     tab: 1
   },
   {
     name: "项目部",
     desc: "组织管理科协自有项目孵化与推进。",
-    cover: `${STATIC}/public/images/2024/project.jpg`,
+    cover: `${STATIC}/public/images/division-introduction-project-1.png`,
     tab: 2
   },
   {
     name: "学培部",
     desc: "策划技术培训与讲座，助力同学技能成长。",
-    cover: `${STATIC}/public/images/2024/training.jpg`,
+    cover: `${STATIC}/public/images/division-introduction-knowledge-contest-1.jpg`,
     tab: 3
   },
   {
     name: "宣策部",
     desc: "负责科协品牌宣传与活动策划。",
-    cover: `${STATIC}/public/images/2024/publicity.jpg`,
+    cover: `${STATIC}/public/images/division-introduction-conference-1.png`,
     tab: 4
   }
 ];
@@ -62,7 +62,7 @@ const displayWall = [
     image: "https://static.eesast.com/public/images/2024/2024_THUAI_8.png",
     title: "队式程序设计大赛（THUAI）",
     description:
-      "“队式程序设计大赛”是由清华大学电子系科协举办的一项经典赛事，是一个组队参加的对抗性策略程序设计比赛。比赛主题往往基于某款经典电子游戏，设计出的全新规则，邀请选手组队设计出更加完善和智能的游戏策略，并用高效的程序代码实现。",
+      "队式程序设计大赛是由清华大学电子系科协举办的一项经典赛事，是一个组队参加的对抗性策略程序设计比赛。比赛主题往往基于某款经典电子游戏，设计出全新规则，邀请选手组队设计智能的游戏策略，并用高效的程序代码实现。比赛以双方 AI 对战为主，决赛还会使用 3D 界面播送比赛实况。",
     docs: "https://docs.eesast.com/docs/contests/thuai"
   },
   {
@@ -82,6 +82,14 @@ const displayWall = [
     docs: "https://docs.eesast.com/docs/contests/software"
   },
   {
+    id: 4,
+    image: "https://static.eesast.com/public/images/2024/2024_uav_1.jpg",
+    title: "电子设计大赛",
+    description:
+      "电子设计大赛面向全校同学，要求参赛者使用主流技术完成具备可用性和美观性的电子系统，智能小车、智能家居和智能穿戴设备等作品均可参赛。",
+    docs: "https://docs.eesast.com/docs/contests/electronic-design"
+  },
+  {
     id: 5,
     image: "https://static.eesast.com/public/images/2024/2024_freshman_knowledge_2.jpg",
     title: "新生信息知识竞赛",
@@ -94,7 +102,7 @@ const displayWall = [
     image: "https://static.eesast.com/public/images/2024/2024_challenge_1.jpg",
     title: "挑战杯",
     description:
-      "清华大学“挑战杯”学生课外学术科技作品竞赛是由教务处、科研院、研究生院、校团委和校学生科协共同主办的全校性学生课外科技作品竞赛，在电子系承办的诸多赛事中对参赛者的综合能力要求最高。",
+      "清华大学“挑战杯”学生课外学术科技作品竞赛由教务处、科研院、研究生院、校团委和校学生科协共同主办，是清华大学历史最长、规模最大、水平最高的综合性学生课外科技作品竞赛。",
     docs: "https://docs.eesast.com/docs/contests/challenge-cup"
   },
   {
@@ -102,7 +110,7 @@ const displayWall = [
     image: "https://static.eesast.com/public/images/2024/2024_electric_25.jpg",
     title: "电子设计大赛",
     description:
-      "“电子设计大赛”是由清华大学电子系和自动化系合办的面向全校的比赛，选手可以组成不多于四人的队伍报名参加比赛。比赛一般是要求选手设计一辆智能车，根据赛题内容设计机械结构，编写单片机代码，实现自动控制。",
+      "电子设计大赛由清华大学电子系和自动化系合办，面向全校开放。选手可组成不多于四人的队伍，设计机械结构、编写单片机代码，实现智能车自动控制并完成对抗。",
     docs: "https://docs.eesast.com/docs/contests/electronic-design-contest"
   }
 ];
