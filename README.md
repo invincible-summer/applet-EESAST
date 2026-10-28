@@ -2,7 +2,7 @@
 
 清华大学电子工程系学生科协（EESAST）平台的微信小程序客户端，将 [eesast.com](https://eesast.com) 的主要功能以原生小程序的方式呈现。
 
-> 设计文档见 [DESIGN.md](./DESIGN.md)。本仓库为**独立新增仓库**，不修改同目录下 `web` / `api` / `hasura` 三个原有仓库的任何内容，作为现有后端（`api.eesast.com` + Hasura GraphQL + 腾讯云 COS）的新客户端运行。
+> 项目架构、ADR、版本和验收文档见 [docs/README.md](./docs/README.md)。本仓库为**独立新增仓库**，不修改同目录下 `web` / `api` / `hasura` 三个原有仓库的任何内容，作为现有后端（`api.eesast.com` + Hasura GraphQL + 腾讯云 COS）的新客户端运行。
 
 ## 功能总览
 
@@ -14,7 +14,7 @@
 | 资源共享 | 课程评测（搜索/六维评分/评论/点赞收藏）、SAST Weekly |
 | 我的 | 账号密码登录、分步注册（邮箱验证码）、找回密码、个人资料编辑、头像上传、清华邮箱认证（升级学生身份）、注销账号、退出登录 |
 
-暂不包含（详见 DESIGN.md §4.2）：Unity WebGL 试玩/直播/在线回放（平台不支持，引导网页端）、赛事管理端、微信一键登录（需后端改造）。
+暂不包含（详见 [架构说明](./docs/architecture/README.md)）：Unity WebGL 试玩/直播/在线回放（平台不支持，引导网页端）、赛事管理端、微信一键登录（需后端改造）。
 
 ## 快速开始
 
@@ -49,7 +49,8 @@ scripts/devtools.sh sync     # 仅同步镜像
 
 ```
 applet/
-├── DESIGN.md                  # 设计文档（调研/架构/安全/适配/计划）
+├── AGENTS.md                  # 仓库协作、验证和提交规范
+├── docs/                      # 架构、ADR、版本和验收文档
 ├── project.config.json
 ├── scripts/                   # 图标生成与校验脚本（不打包）
 └── miniprogram/
