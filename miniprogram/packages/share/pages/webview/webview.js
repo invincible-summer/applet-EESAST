@@ -1,4 +1,4 @@
-const WECHAT_ARTICLE_RE = /^https:\/\/mp\.weixin\.qq\.com\/s(?:[/?#]|$)/i;
+const { isAllowedWebViewUrl } = require("../../../../utils/external-link");
 
 Page({
   data: {
@@ -13,7 +13,7 @@ Page({
     } catch (e) {
       url = "";
     }
-    if (!WECHAT_ARTICLE_RE.test(url)) {
+    if (!isAllowedWebViewUrl(url)) {
       this.setData({ failed: true });
       return;
     }

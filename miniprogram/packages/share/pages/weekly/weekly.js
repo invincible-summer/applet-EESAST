@@ -1,5 +1,6 @@
 const portalService = require("../../../../services/portal");
 const fmt = require("../../../../utils/format");
+const { getOpenMode } = require("../../../../utils/external-link");
 
 Page({
   data: {
@@ -26,11 +27,10 @@ Page({
       .getWeekly()
       .then((data) => {
         const weeklies = ((data && data.weekly) || []).map((w) => ({
+          ...getOpenMode(w.url),
           id: w.id,
           title: w.title,
-          url: normalizeUrl(w.url),
           date: fmt.formatDate(w.date),
-          canOpenInApp: isWechatArticle(w.url)
         }));
         this.setData({ weeklies, loading: false });
       })
@@ -38,14 +38,15 @@ Page({
   },
 
   openWeekly(e) {
-    const url = e.currentTarget.dataset.url;
-    if (isWechatArticle(url)) {
+    const id = String(e.currentTarget.dataset.id);
+    const item = (this.data.weeklies || []).find((weekly) => String(weekly.id) === id);
+    if (item && item.mode === "webview") {
       wx.navigateTo({
-        url: `/packages/share/pages/webview/webview?url=${encodeURIComponent(normalizeUrl(url))}`
+        url: `/packages/share/pages/webview/webview?url=${encodeURIComponent(item.url)}`
       });
       return;
     }
-    this.copyUrl(e);
+    this.copyUrl({ currentTarget: { dataset: { url: item ? item.url : e.currentTarget.dataset.url } } });
   },
 
   copyUrl(e) {
@@ -55,12 +56,3 @@ Page({
     });
   }
 });
-
-function isWechatArticle(url) {
-  return /^https?:\/\/mp\.weixin\.qq\.com\/s(?:[/?#]|$)/i.test(String(url || ""));
-}
-
-function normalizeUrl(url) {
-  const value = String(url || "").trim();
-  return isWechatArticle(value) ? value.replace(/^http:\/\//i, "https://") : value;
-}

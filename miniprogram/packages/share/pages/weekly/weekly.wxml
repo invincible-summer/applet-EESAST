@@ -7,7 +7,7 @@
         <text class="weekly-title ellipsis-2">{{item.title}}</text>
         <text class="text-3" style="margin-top: 10rpx;">{{item.date}}</text>
       </view>
-      <text class="weekly-action">{{item.canOpenInApp ? '阅读' : '复制'}}</text>
+      <text class="weekly-action">{{item.mode === 'webview' ? '阅读' : '复制'}}</text>
     </view>
     <view class="text-3" style="text-align:center; margin-top: 16rpx;">公众号文章将在小程序内打开，其他链接将复制到剪贴板</view>
   </block>

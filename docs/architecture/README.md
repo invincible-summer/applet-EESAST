@@ -76,7 +76,8 @@ applet/
 
 - SAST Weekly 的线上 URL 是 `mp.weixin.qq.com/s` 公众号文章。Weekly 页面会将 `http` 链接规范化为 `https`，通过分包内的 `web-view` 页面尝试直接阅读；网页加载失败时仍可复制原链接。
 - 微信官方 [`web-view` 说明](https://developers.weixin.qq.com/miniprogram/dev/component/web-view.html) 可以打开与小程序关联的公众号文章；其他网页必须在小程序后台配置业务域名。Docs、网页端赛事介绍和 Minecraft 等普通网页目前继续复制链接，不能假定所有环境都已配置业务域名。
-- `web-view` 页面只接受 Weekly 生成的 HTTPS 公众号文章 URL，不接受任意页面参数，避免把小程序变成开放跳转器。
+- `utils/external-link.js` 集中维护 URL 规范化、允许域名和打开模式；`web-view` 页面只接受策略允许的 HTTPS URL，不接受任意页面参数，避免把小程序变成开放跳转器。当前线上 382 条 Weekly 全部属于公众号文章形态。
+- 如果未来 Weekly 使用新的网页域名，需要同时把域名加入该策略白名单，并在小程序后台配置业务域名后再切换为内嵌打开。
 
 ## 页面与功能边界
 
