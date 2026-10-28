@@ -34,6 +34,8 @@
   </view>
   <scroll-view class="division-scroll" scroll-x enable-flex enhanced show-scrollbar="{{false}}">
     <view class="division-card" wx:for="{{divisions}}" wx:key="name">
+      <image class="division-cover" src="{{item.cover}}" mode="aspectFill"></image>
+      <view class="division-mask"></view>
       <view class="division-body">
         <text class="division-name">{{item.name}}</text>
         <text class="division-desc">{{item.desc}}</text>

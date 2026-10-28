@@ -1,13 +1,15 @@
 .news-swiper {
-  height: 340rpx;
-  border-radius: 20rpx;
+  height: 360rpx;
+  border-radius: 8rpx;
   overflow: hidden;
+  background: var(--card);
+  border: 1rpx solid var(--border);
 }
 .news-item {
   position: relative;
-  height: 340rpx;
-  border-radius: 20rpx;
+  height: 360rpx;
   overflow: hidden;
+  background: var(--card-2);
 }
 .news-img {
   width: 100%;
@@ -18,22 +20,22 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 50%;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.55));
+  height: 48%;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.58));
 }
 .news-title {
   position: absolute;
-  left: 24rpx;
-  bottom: 20rpx;
+  left: 28rpx;
+  bottom: 22rpx;
   color: #ffffff;
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: 600;
-  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 12rpx rgba(0, 0, 0, 0.7);
 }
 
 .quick {
   display: flex;
-  padding: 30rpx 12rpx;
+  padding: 24rpx 12rpx;
 }
 .quick-item {
   flex: 1;
@@ -42,29 +44,26 @@
   align-items: center;
 }
 .quick-icon {
-  width: 92rpx;
-  height: 92rpx;
-  border-radius: 28rpx;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 8rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 34rpx;
-  font-weight: 700;
+  font-size: 30rpx;
+  font-weight: 600;
   color: #ffffff;
-  margin-bottom: 14rpx;
+  background: var(--brand);
+  margin-bottom: 12rpx;
 }
-.qi-contest {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-}
-.qi-info {
-  background: linear-gradient(135deg, #0ea5e9, #06b6d4);
-}
+.qi-contest,
+.qi-info,
 .qi-course {
-  background: linear-gradient(135deg, #10b981, #34d399);
+  background: var(--brand);
 }
 .quick-label {
   font-size: 24rpx;
-  color: var(--text-2);
+  color: var(--text);
 }
 
 .section-head {
@@ -73,6 +72,10 @@
   justify-content: space-between;
   margin: 32rpx 4rpx 20rpx;
 }
+.section-head .text-3 {
+  color: var(--text-2);
+  letter-spacing: 1rpx;
+}
 
 .division-scroll {
   white-space: nowrap;
@@ -80,40 +83,48 @@
 }
 .division-card {
   display: inline-flex;
+  position: relative;
   width: 300rpx;
   height: 200rpx;
-  margin-right: 20rpx;
-  border-radius: 18rpx;
-  padding: 24rpx;
+  margin-right: 16rpx;
+  border-radius: 8rpx;
   box-sizing: border-box;
-  background: var(--brand-grad);
+  overflow: hidden;
   color: #ffffff;
   align-items: flex-end;
+  background: var(--card);
+  border: 1rpx solid var(--border);
 }
-.division-card:nth-child(2) {
-  background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+.division-cover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }
-.division-card:nth-child(3) {
-  background: linear-gradient(135deg, #10b981, #059669);
-}
-.division-card:nth-child(4) {
-  background: linear-gradient(135deg, #f59e0b, #f97316);
-}
-.division-card:nth-child(5) {
-  background: linear-gradient(135deg, #ec4899, #f43f5e);
+.division-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
 }
 .division-body {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
+  padding: 22rpx;
 }
 .division-name {
-  font-size: 32rpx;
-  font-weight: 700;
-  margin-bottom: 8rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 6rpx;
 }
 .division-desc {
   font-size: 20rpx;
-  opacity: 0.9;
+  opacity: 0.92;
   white-space: normal;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -134,25 +145,6 @@
 .wall-img {
   width: 100%;
   height: 240rpx;
-}
-
-/* 宽屏（≥600px）：赛事墙两列网格 + 轮播加高，避免单列拉长 */
-@media (min-width: 600px) {
-  .news-swiper,
-  .news-item {
-    height: 420rpx;
-  }
-  .wall {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24rpx;
-  }
-  .wall .wall-card {
-    margin-bottom: 0;
-  }
-  .wall-img {
-    height: 280rpx;
-  }
 }
 .wall-body {
   padding: 24rpx;
@@ -182,4 +174,22 @@
 .footer-links {
   margin-top: 8rpx;
   color: var(--brand);
+}
+
+@media (min-width: 600px) {
+  .news-swiper,
+  .news-item {
+    height: 420rpx;
+  }
+  .wall {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24rpx;
+  }
+  .wall .wall-card {
+    margin-bottom: 0;
+  }
+  .wall-img {
+    height: 280rpx;
+  }
 }

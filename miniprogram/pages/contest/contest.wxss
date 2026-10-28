@@ -4,18 +4,18 @@
 }
 .filter-item {
   display: inline-block;
-  padding: 10rpx 30rpx;
-  margin-right: 16rpx;
-  border-radius: 999rpx;
+  padding: 12rpx 20rpx 10rpx;
+  margin-right: 12rpx;
+  border-radius: 0;
   font-size: 26rpx;
   color: var(--text-2);
-  background: var(--card);
-  border: 1rpx solid var(--border);
+  background: transparent;
+  border-bottom: 2rpx solid transparent;
 }
 .filter-active {
-  background: var(--brand-light);
+  background: transparent;
   color: var(--brand);
-  border-color: transparent;
+  border-bottom-color: var(--brand);
   font-weight: 600;
 }
 .contest-card {
