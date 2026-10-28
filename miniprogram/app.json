@@ -38,7 +38,8 @@
       "pages": [
         "pages/course/course",
         "pages/course-detail/course-detail",
-        "pages/weekly/weekly"
+        "pages/weekly/weekly",
+        "pages/webview/webview"
       ]
     }
   ],

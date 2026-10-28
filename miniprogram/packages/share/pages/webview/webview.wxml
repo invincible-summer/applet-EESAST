@@ -1,0 +1,7 @@
+<view wx:if="{{failed}}" class="webview-fallback">
+  <text class="fallback-title">文章暂时无法在小程序内打开</text>
+  <text class="text-2 fallback-desc">可以复制链接后在微信中打开。</text>
+  <view class="btn btn-primary fallback-btn" bind:tap="copyLink">复制链接</view>
+</view>
+<web-view wx:else src="{{url}}" bind:error="onError"></web-view>
+

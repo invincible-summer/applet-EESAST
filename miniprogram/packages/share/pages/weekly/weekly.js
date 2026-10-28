@@ -28,12 +28,24 @@ Page({
         const weeklies = ((data && data.weekly) || []).map((w) => ({
           id: w.id,
           title: w.title,
-          url: w.url,
-          date: fmt.formatDate(w.date)
+          url: normalizeUrl(w.url),
+          date: fmt.formatDate(w.date),
+          canOpenInApp: isWechatArticle(w.url)
         }));
         this.setData({ weeklies, loading: false });
       })
       .catch(() => this.setData({ loading: false }));
+  },
+
+  openWeekly(e) {
+    const url = e.currentTarget.dataset.url;
+    if (isWechatArticle(url)) {
+      wx.navigateTo({
+        url: `/packages/share/pages/webview/webview?url=${encodeURIComponent(normalizeUrl(url))}`
+      });
+      return;
+    }
+    this.copyUrl(e);
   },
 
   copyUrl(e) {
@@ -43,3 +55,12 @@ Page({
     });
   }
 });
+
+function isWechatArticle(url) {
+  return /^https?:\/\/mp\.weixin\.qq\.com\/s(?:[/?#]|$)/i.test(String(url || ""));
+}
+
+function normalizeUrl(url) {
+  const value = String(url || "").trim();
+  return isWechatArticle(value) ? value.replace(/^http:\/\//i, "https://") : value;
+}

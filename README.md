@@ -23,6 +23,8 @@
 3. 项目零 npm 依赖，导入即可预览
 4. 开发者工具中请保持「不校验合法域名」仅用于本地调试（已放在 `project.private.config.json`，该文件不入库）
 
+Weekly 公众号文章会尝试在小程序内打开；Docs、赛事网页介绍和 Minecraft 等普通网页仍需配置业务域名后才能使用 `web-view`，当前默认复制链接到微信/浏览器打开。
+
 ### WSL 环境：启动 Windows 侧开发者工具真机调试
 
 在 WSL 中开发时，用 `scripts/devtools.sh` 一键把项目镜像同步到 Windows 盘并启动微信开发者工具（工具对 `\\wsl.localhost` UNC 路径支持不稳，故先镜像到 `D:\wechat-aaplet\eesast-applet`，镜像已开热重载，重复 sync 自动重编译）：
